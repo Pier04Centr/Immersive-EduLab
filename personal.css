@@ -1,0 +1,25 @@
+/* Forza lo sfondo del body per coprire quello di MDB */
+        body { 
+            background-color: #f4f6f9; 
+            padding-left: 80px; /* IMPORTANTE: Spazio per la Sidebar fissa */
+        }
+        
+        /* Adattamenti specifici per la tabella Admin */
+        .card-profile { margin-top: 2rem; border-radius: 15px; }
+        .avatar-placeholder { 
+            width: 80px; height: 80px; 
+            background: #3b71ca; color: white; 
+            border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; 
+            font-size: 2rem; margin: 0 auto 1rem; 
+        }
+        
+        /* Input trasparenti nella tabella */
+        .table-admin input { border: none; background: transparent; width: 100%; }
+        .table-admin input:focus { border-bottom: 2px solid #3b71ca; outline: none; }
+        .btn-logout { border-radius: 50px; }
+
+        /* Mobile Responsive per la sidebar */
+        @media (max-width: 768px) {
+            body { padding-left: 0; padding-bottom: 80px; }
+        }
