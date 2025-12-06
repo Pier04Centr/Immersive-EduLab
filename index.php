@@ -1,6 +1,13 @@
 <?php
     include("./connect.php");
     error_reporting(0);
+    session_start();
+    if (!isset($_SESSION['username'])) {
+        header("Location: ../login/index.php");
+    } else {
+        $nome = ucfirst($_SESSION['nome']) . " " . ucfirst($_SESSION['cognome']);
+        $username = $_SESSION['username'];
+    }
 ?>
 
 <!DOCTYPE html>
