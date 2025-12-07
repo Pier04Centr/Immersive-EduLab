@@ -229,7 +229,7 @@
     </div>
 
     <script>
-        // --- FUNZIONI CARICAMENTO FILE (UI bottone) ---
+        // --- FUNZIONI CARICAMENTO FILE ---
         function updateFileName(input) {
             const label = document.getElementById('file-label-text');
             if (input.files && input.files.length > 0) {
@@ -242,12 +242,12 @@
             }
         }
 
-        // --- GESTIONE MODALI UPLOAD ---
+        // --- GESTIONE MODALI ---
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
         function closeUploadModalForce() { document.getElementById('uploadModal').style.display = 'none'; }
         function closeUploadModal(event) { if (event.target.id === 'uploadModal') closeUploadModalForce(); }
 
-        // --- NUOVA LOGICA PER IL VIEWER INTERATTIVO ---
+        // --- NUOVA LOGICA PER IL VIEWER INTERATTIVO (CORRETTA) ---
         const viewer = document.getElementById('fullViewer');
         const slider = document.getElementById('animSlider');
         const controlsDiv = document.getElementById('animControls');
@@ -255,42 +255,59 @@
         function openViewModal(path, title, category) {
             const modal = document.getElementById('viewModal');
             
-            // 1. Carico il modello e testi
+            // 1. Reset completo prima di caricare il nuovo
+            viewer.src = ""; 
+            slider.value = 0;
+            controlsDiv.style.display = 'none'; 
+
+            // 2. Carico il modello
             viewer.src = path;
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalCategory').innerText = category;
             
-            // 2. Resetto lo stato interattivo
-            slider.value = 0;
-            controlsDiv.style.display = 'none'; // Nascondo i controlli finché non carica
-            
             modal.style.display = 'flex';
         }
 
-        // Quando il modello è caricato, controlliamo se ha animazioni
+        // Quando il modello è caricato, configuriamo l'animazione
         viewer.addEventListener('load', () => {
-            if (viewer.availableAnimations.length > 0) {
-                // SE HA ANIMAZIONI (es. V8 engine): Mostra lo slider
+            const animations = viewer.availableAnimations;
+            
+            if (animations.length > 0) {
+                // SE HA ANIMAZIONI:
                 controlsDiv.style.display = 'block';
-                viewer.pause(); // Ferma l'autoplay per dare il controllo all'utente
+                
+                // --- FIX IMPORTANTE 1: Selezioniamo la prima animazione trovata ---
+                viewer.animationName = animations[0]; 
+                
+                // Mettiamo in pausa e resettiamo al tempo 0
+                viewer.pause(); 
                 viewer.currentTime = 0;
+                
+                // --- FIX IMPORTANTE 2: Aggiorniamo la durata dello slider ---
+                // A volte serve un piccolo ritardo per leggere la durata corretta
+                setTimeout(() => {
+                    slider.value = 0;
+                }, 100);
+
             } else {
-                // SE NON HA ANIMAZIONI (es. sedia statica): Nascondi slider
+                // SE NON HA ANIMAZIONI: Nascondi slider
                 controlsDiv.style.display = 'none';
             }
         });
 
         // Logica dello slider: collega la barra al tempo dell'animazione
         slider.addEventListener('input', (event) => {
+            // Controlliamo che la durata sia valida
             if (viewer.duration > 0) {
                 const percentage = event.target.value;
+                // Calcoliamo il secondo esatto: (Percentuale / 100) * Durata Totale
                 viewer.currentTime = (viewer.duration * percentage) / 100;
             }
         });
 
         function closeViewModalForce() {
             const modal = document.getElementById('viewModal');
-            viewer.src = ""; // Pulisce la memoria e ferma audio/video
+            viewer.src = ""; // Pulisce la memoria
             modal.style.display = 'none';
         }
         function closeViewModal(event) { if (event.target.id === 'viewModal') closeViewModalForce(); }
