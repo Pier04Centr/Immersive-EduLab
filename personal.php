@@ -2,29 +2,32 @@
 session_start();
 include 'conn.php';
 
-// Controllo sessione
+// 1. Controllo sessione
 if (!isset($_SESSION['username'])) {
     header("Location: ./index.php");
     exit();
 }
 
-$nome_visualizzato = htmlspecialchars(ucfirst($_SESSION['nome']) . " " . ucfirst($_SESSION['cognome']));
-$username_corrente = $_SESSION['username'];
-
-// Controllo connessione DB
+// 2. Controllo connessione DB
 if (!$conn) {
     die("Errore di connessione al database.");
 }
 
-// 1. PREPARED STATEMENT per sicurezza (Preleviamo i dati dell'utente loggato)
-$stmt = $conn->prepare("SELECT * FROM utenti JOIN ruoli ON utenti.CODRuolo = ruoli.IDRuolo WHERE username = ?");
-$stmt->bind_param("s", $username_corrente);
-$stmt->execute();
-$result = $stmt->get_result();
-$currentUser = $result->fetch_assoc();
-$stmt->close();
+// 3. RECUPERO DATI DAL DATABASE (Questa è la parte che mancava!)
+$username_corrente = mysqli_real_escape_string($conn, $_SESSION['username']);
 
-$isAdmin = ($currentUser['Descrizione'] === 'Super user');
+$sql = "SELECT * FROM utenti WHERE Username = '$username_corrente'";
+$result = mysqli_query($conn, $sql);
+
+if ($result && mysqli_num_rows($result) > 0) {
+    // Riempiamo la variabile $currentUser con i dati reali del DB
+    $currentUser = mysqli_fetch_assoc($result);
+} else {
+    // Se per assurdo l'utente è in sessione ma non nel DB
+    session_destroy();
+    header("Location: ./index.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -75,8 +78,13 @@ $isAdmin = ($currentUser['Descrizione'] === 'Super user');
                         <div class="avatar-placeholder">
                             <?= strtoupper(substr($currentUser['Nome'], 0, 1)) ?>
                         </div>
-                        <h4 class="mb-2"><?= htmlspecialchars(ucfirst($currentUser['Nome']) . " " . ucfirst($currentUser['Cognome'])) ?></h4>
-                        <p class="text-muted mb-4 badge bg-primary"><?= htmlspecialchars($currentUser['Descrizione']) ?></p>
+                        <h4 class="mb-2">
+                            <?= htmlspecialchars(ucfirst($currentUser['Nome']) . " " . ucfirst($currentUser['Cognome'])) ?>
+                        </h4>
+                        
+                        <p class="text-muted mb-4 badge bg-primary">
+                            <?= htmlspecialchars($currentUser['Descrizione'] ?? 'Utente') ?>
+                        </p>
                         
                         <div class="list-group list-group-flush text-start">
                             <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -87,7 +95,7 @@ $isAdmin = ($currentUser['Descrizione'] === 'Super user');
                                 <span><i class="fas fa-envelope me-2 text-secondary"></i>Email</span>
                                 <span><?= htmlspecialchars($currentUser['Email'] ?? 'Non specificata') ?></span>
                             </div>
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

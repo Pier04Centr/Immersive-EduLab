@@ -1,21 +1,110 @@
-<!doctype HTML>
 <?php
 session_start();
+include 'conn.php'; // Includiamo subito la connessione
+
+// Variabile per mostrare eventuali errori/messaggi nel corpo HTML
+$alertMessage = "";
+
+// --- LOGICA DI REGISTRAZIONE ---
+if (isset($_POST['register'])) {
+    $username = mysqli_real_escape_string($conn, strtolower($_POST['username']));
+    $nome = mysqli_real_escape_string($conn, strtolower($_POST['nome']));
+    $cognome = mysqli_real_escape_string($conn, strtolower($_POST['cognome']));
+    $email = mysqli_real_escape_string($conn, strtolower($_POST['email']));
+    $password = $_POST['password'];
+    $cpassword = $_POST['cpassword'];
+
+    // Controllo Username
+    $checkUser = mysqli_query($conn, "SELECT * FROM utenti WHERE Username = '$username'");
+    if (mysqli_num_rows($checkUser) > 0) {
+        $alertMessage = "Username già utilizzato";
+    } else {
+        if ($password == $cpassword) {
+            // Controllo Email
+            $checkEmail = mysqli_query($conn, "SELECT * FROM utenti WHERE Email = '$email'");
+            if (mysqli_num_rows($checkEmail) == 0) {
+                
+                // FIX IMPORTANTE: Qui usiamo le variabili dirette, non $info (che non esiste ancora)
+                // Nota: Di solito si fa il login DOPO la registrazione, ma se vuoi settare la sessione subito:
+                $_SESSION['username'] = $username;
+                $_SESSION['nome'] = $nome;
+                $_SESSION['cognome'] = $cognome;
+
+                // Inserimento nel DB
+                // Nota: SHA2 è una funzione di MySQL
+                $sql = "INSERT INTO utenti (Username, Nome, Cognome, Email, Password) VALUES ('$username', '$nome', '$cognome', '$email', SHA2('$password', 512))";
+                $result = mysqli_query($conn, $sql);
+
+                if ($result) {
+                    // Usiamo JavaScript per fare sia l'alert che il redirect
+                    echo "<script>
+                        alert('Registrazione avvenuta con successo');
+                        window.location.href = '../Image-Gallary/index.php';
+                    </script>";
+                    exit();
+                } else {
+                    $alertMessage = "Registrazione non avvenuta: " . mysqli_error($conn);
+                }
+            } else {
+                $alertMessage = "Email già utilizzata";
+            }
+        } else {
+            $alertMessage = "Password non corrispondenti";
+        }
+    }
+}
+
+// --- LOGICA DI LOGIN ---
+if (isset($_POST['login'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = $_POST['password'];
+    // Hashing della password per confrontarla con quella nel DB
+    $passwordHashed = hash('sha512', $password);
+
+    $sql = "SELECT * FROM utenti WHERE Email = '$email'";
+    $result = mysqli_query($conn, $sql);
+
+    if ($result->num_rows > 0) {
+        $info = $result->fetch_assoc();
+        // Confrontiamo le password
+        if ($passwordHashed == $info['Password']) {
+            $_SESSION['username'] = $info['Username'];
+            $_SESSION['nome'] = $info['Nome'];
+            $_SESSION['cognome'] = $info['Cognome'];
+            
+            // Redirect
+            header("Location: ../Image-Gallary/index.php");
+            exit();
+        } else {
+            $alertMessage = "La password non è corretta";
+        }
+    } else {
+        $alertMessage = "Email non trovata";
+    }
+}
+
+// Redirect se già loggato
 if (isset($_SESSION['username'])) {
-    echo "<script> alert('Sei gia loggato') </script>";
-    header("refresh:0;url=./personal.php");
+    // Nota: path corretto per tornare alla home o galleria
+   // header("Location: ../Image-Gallary/index.php");
+   // exit();
 }
 ?>
-<html>
 
+<!doctype HTML>
+<html>
 <head>
-    <meta name="viewport" content="width=Ddevice-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="stile.css">
 </head>
 
 <body>
+    <?php if ($alertMessage != ""): ?>
+        <script>alert("<?php echo $alertMessage; ?>");</script>
+    <?php endif; ?>
+
     <div class="container">
         <div class="blueBg">
             <div class="box signin">
@@ -47,81 +136,12 @@ if (isset($_SESSION['username'])) {
                     <input type="email" placeholder="Email Address" name="email" required>
                     <input type="password" placeholder="Password" name="password" id="password" required>
                     <input type="password" placeholder="Confirm Password" name="cpassword" id="confirmPassword" required>
-                    <Input type="submit" value="Register" id="register" name="register">
+                    <input type="submit" value="Register" id="register" name="register">
                 </form>
             </div>
         </div>
     </div>
-
-    <?php
-    include 'conn.php';
     
-    if (!$conn) {
-        die("<script> alert('Connessione non riusita') </script>");
-    }
-
-    if (isset($_POST['register'])) {
-        $username = strtolower($_POST['username']);
-        if (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM utenti WHERE username = '$username'")) > 0) {
-            echo "<script> alert('Username già utilizzato') </script>";
-        } else {
-            $nome = strtolower($_POST['nome']);
-            $cognome = strtolower($_POST['cognome']);
-            $email = strtolower($_POST['email']);
-            $password = $_POST['password'];
-            $cpassword = $_POST['cpassword'];
-
-            if ($password == $cpassword) {
-                $sql = "SELECT * FROM utenti WHERE email = '$email'";
-                $result = mysqli_query($conn, $sql);
-                if (!$result->num_rows > 0) {
-                    $_SESSION['username'] = $info['Username'];
-                    $_SESSION['nome'] = $info['Nome'];
-                    $_SESSION['cognome'] = $info['Cognome'];
-                    $sql = "INSERT INTO utenti (Username, Nome, Cognome, Email, Password,CODRuolo) VALUES ('$username', '$nome', '$cognome', '$email', SHA2('$password', 512) , 2)";
-                    $result = mysqli_query($conn, $sql);
-                    if ($result) {
-                        echo "<script> alert('Registrazione avvenuta con successo') </script>";
-                        header("Location: ../Image-Gallary/index.php");
-                    } else {
-                        echo "<script> alert('Registrazione non avvenuta') </script>";
-                    }
-                } else {
-                    echo "<script> alert('Email già utilizzata') </script>";
-                }
-            } else {
-                echo "<script> alert('Password non corrispondenti') </script>";
-            }
-        }
-    }
-
-
-    if (isset($_POST['login'])) {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $password = hash('sha512', $password);
-
-        $sql = "SELECT * FROM utenti WHERE email = '$email'";
-        $result = mysqli_query($conn, $sql);
-        if ($result->num_rows > 0) {
-            $info = $result->fetch_assoc();
-            if ($password == $info['Password']) {
-                echo "<script> alert('Login avvenuto con successo') </script>";
-                $_SESSION['username'] = $info['Username'];
-                $_SESSION['nome'] = $info['Nome'];
-                $_SESSION['cognome'] = $info['Cognome'];
-                header("Location: ../Image-Gallary/index.php");
-            } else {
-                echo "<script> alert('La password non è corretta') </script>";
-            }
-        } else {
-            echo "<script> alert('Email non trovato') </script>";
-        }
-    }
-    mysqli_close($conn);
-
-    ?>
+    <script src="script.js"></script>
 </body>
-<script src="script.js"></script>
-
 </html>
