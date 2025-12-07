@@ -205,6 +205,9 @@
                 <model-viewer 
                     id="fullViewer" 
                     src="" 
+                    autoplay
+                    loop
+                    animation-crossfade-duration="0"
                     ar ar-modes="webxr scene-viewer quick-look" 
                     camera-controls 
                     shadow-intensity="1" 
@@ -215,13 +218,14 @@
                     </button>
                 </model-viewer>
 
-                <div id="animControls" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; background: rgba(255,255,255,0.9); padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display:none;">
-                    <label style="font-weight:bold; display:block; margin-bottom:5px; text-align:center;">
-                        🎮 Controllo Interattivo
-                    </label>
-                    <input type="range" id="animSlider" min="0" max="100" value="0" step="0.1" style="width: 100%; cursor: pointer;">
-                    <div style="text-align:center; font-size:12px; color:#666; margin-top:5px;">
-                        Muovi la barra per animare l'oggetto
+                <div id="animControls" style="display:none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width:500px; background: rgba(255,255,255,0.95); padding: 10px 20px; border-radius: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display:flex; align-items:center; gap: 15px;">
+                    
+                    <button id="playPauseBtn" style="border:none; background:var(--primary); color:white; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+                        ⏸️
+                    </button>
+
+                    <div style="flex-grow:1; display:flex; flex-direction:column;">
+                        <input type="range" id="animSlider" min="0" max="100" value="0" step="0.1" style="width: 100%; cursor: pointer;">
                     </div>
                 </div>
             </div>
@@ -229,7 +233,7 @@
     </div>
 
     <script>
-        // --- FUNZIONI CARICAMENTO FILE ---
+        // --- FUNZIONI CARICAMENTO FILE (UI) ---
         function updateFileName(input) {
             const label = document.getElementById('file-label-text');
             if (input.files && input.files.length > 0) {
@@ -241,26 +245,27 @@
                 label.innerText = "Scegli file .glb";
             }
         }
-
-        // --- GESTIONE MODALI ---
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
         function closeUploadModalForce() { document.getElementById('uploadModal').style.display = 'none'; }
         function closeUploadModal(event) { if (event.target.id === 'uploadModal') closeUploadModalForce(); }
 
-        // --- NUOVA LOGICA PER IL VIEWER INTERATTIVO (CORRETTA) ---
+        // --- LOGICA ANIMAZIONE AVANZATA ---
         const viewer = document.getElementById('fullViewer');
         const slider = document.getElementById('animSlider');
         const controlsDiv = document.getElementById('animControls');
+        const playBtn = document.getElementById('playPauseBtn');
+        let isUserDragging = false; // Variabile per capire se l'utente sta toccando lo slider
 
         function openViewModal(path, title, category) {
             const modal = document.getElementById('viewModal');
             
-            // 1. Reset completo prima di caricare il nuovo
+            // 1. Reset
             viewer.src = ""; 
             slider.value = 0;
             controlsDiv.style.display = 'none'; 
+            isUserDragging = false;
 
-            // 2. Carico il modello
+            // 2. Carico
             viewer.src = path;
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalCategory').innerText = category;
@@ -268,46 +273,86 @@
             modal.style.display = 'flex';
         }
 
-        // Quando il modello è caricato, configuriamo l'animazione
+        // --- SETUP QUANDO IL MODELLO È PRONTO ---
         viewer.addEventListener('load', () => {
             const animations = viewer.availableAnimations;
             
             if (animations.length > 0) {
-                // SE HA ANIMAZIONI:
-                controlsDiv.style.display = 'block';
+                controlsDiv.style.display = 'flex'; // Mostra controlli (flex per allinearli)
                 
-                // --- FIX IMPORTANTE 1: Selezioniamo la prima animazione trovata ---
-                viewer.animationName = animations[0]; 
-                
-                // Mettiamo in pausa e resettiamo al tempo 0
-                viewer.pause(); 
-                viewer.currentTime = 0;
-                
-                // --- FIX IMPORTANTE 2: Aggiorniamo la durata dello slider ---
-                // A volte serve un piccolo ritardo per leggere la durata corretta
-                setTimeout(() => {
-                    slider.value = 0;
-                }, 100);
+                // Forza la prima animazione e attiva il play
+                viewer.animationName = animations[0];
+                viewer.play(); 
+                updatePlayBtnUI(true); // Icona Pausa
 
+                // Avvia il loop che muove lo slider da solo
+                requestAnimationFrame(updateSliderFromModel);
             } else {
-                // SE NON HA ANIMAZIONI: Nascondi slider
                 controlsDiv.style.display = 'none';
             }
         });
 
-        // Logica dello slider: collega la barra al tempo dell'animazione
+        // --- FUNZIONE CHE TIENE LO SLIDER SINCRONIZZATO ---
+        function updateSliderFromModel() {
+            // Se il modale è chiuso o non ci sono animazioni, fermati
+            if (controlsDiv.style.display === 'none') return;
+
+            // Se l'utente NON sta toccando lo slider e il video sta andando...
+            if (!isUserDragging && !viewer.paused && viewer.duration > 0) {
+                const percentage = (viewer.currentTime / viewer.duration) * 100;
+                slider.value = percentage;
+            }
+
+            // Richiama questa funzione al prossimo frame (60 volte al secondo)
+            requestAnimationFrame(updateSliderFromModel);
+        }
+
+        // --- QUANDO L'UTENTE TOCCA LO SLIDER ---
         slider.addEventListener('input', (event) => {
-            // Controlliamo che la durata sia valida
+            isUserDragging = true;   // Segnala che l'utente ha il controllo
+            viewer.pause();          // Ferma l'autoplay
+            updatePlayBtnUI(false);  // Mostra icona Play
+
+            // Aggiorna il fotogramma
             if (viewer.duration > 0) {
-                const percentage = event.target.value;
-                // Calcoliamo il secondo esatto: (Percentuale / 100) * Durata Totale
-                viewer.currentTime = (viewer.duration * percentage) / 100;
+                viewer.currentTime = (viewer.duration * event.target.value) / 100;
             }
         });
 
+        // --- QUANDO L'UTENTE RILASCIA LO SLIDER ---
+        slider.addEventListener('change', () => {
+            isUserDragging = false; // L'utente ha lasciato
+            // Nota: NON riavvio il play in automatico qui, lascio che decida l'utente col bottone.
+            // Se vuoi che riparta subito, decommenta la riga sotto:
+            // togglePlay(); 
+        });
+
+        // --- GESTIONE BOTTONE PLAY/PAUSA ---
+        playBtn.addEventListener('click', togglePlay);
+
+        function togglePlay() {
+            if (viewer.paused) {
+                viewer.play();
+                updatePlayBtnUI(true);
+            } else {
+                viewer.pause();
+                updatePlayBtnUI(false);
+            }
+        }
+
+        function updatePlayBtnUI(isPlaying) {
+            if (isPlaying) {
+                playBtn.innerHTML = "⏸️"; // Icona Pausa
+                playBtn.style.background = "#ff4444"; // Rosso quando è attivo
+            } else {
+                playBtn.innerHTML = "▶️"; // Icona Play
+                playBtn.style.background = "#4a90e2"; // Blu quando è fermo
+            }
+        }
+
         function closeViewModalForce() {
             const modal = document.getElementById('viewModal');
-            viewer.src = ""; // Pulisce la memoria
+            viewer.src = "";
             modal.style.display = 'none';
         }
         function closeViewModal(event) { if (event.target.id === 'viewModal') closeViewModalForce(); }
