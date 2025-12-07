@@ -158,6 +158,26 @@ button {
     color: #333;
 }
 
+/* Feedback visivo input */
+input.valid {
+    border: 2px solid #2ecc71 !important; /* Verde */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%232ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+input.invalid {
+    border: 2px solid #e74c3c !important; /* Rosso */
+}
+
+/* Un piccolo testo di aiuto che appare sotto */
+#pwd-hint {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+    display: none; /* Nascosto di base */
+}
+
 @media only screen and (max-width: 991px) {
     .container {
         max-width: 400px;
