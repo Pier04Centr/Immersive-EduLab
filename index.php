@@ -43,8 +43,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Gallery</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -71,7 +71,7 @@
             <a href="?category=Chimica" class="filter-btn">Chimica</a>
         </div>
 
-        <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px;">
+        <div class="gallery-grid">
             <?php 
                 $where = isset($_GET['category']) ? "WHERE category='".mysqli_real_escape_string($conn, $_GET['category'])."'" : "";
                 $res = mysqli_query($conn, "SELECT * FROM gallary $where ORDER BY title ASC");
@@ -79,10 +79,10 @@
                     $path = "./uploads/" . $row['path'];
                     $t = htmlspecialchars($row['title']);
                     $c = htmlspecialchars($row['category']);
-                    $f = $row['path']; // ID univoco file per la chat
+                    $f = $row['path']; 
             ?>
                 <div class='card' onclick="openViewModal('<?php echo $path; ?>', '<?php echo $t; ?>', '<?php echo $c; ?>', '<?php echo $f; ?>')">
-                    <model-viewer src="<?php echo $path; ?>" auto-rotate rotation-per-second="30deg" interaction-prompt="none" disable-zoom shadow-intensity="1" style="pointer-events: none; width:100%; height:260px; background:var(--modal-bg);"></model-viewer>
+                    <model-viewer src="<?php echo $path; ?>" auto-rotate rotation-per-second="30deg" interaction-prompt="none" disable-zoom shadow-intensity="1" style="pointer-events: none; width:100%; height:240px; background:var(--modal-bg);"></model-viewer>
                     <div class='card-info'>
                         <div style="font-weight:700; font-size:1.1em;"><?php echo $t; ?></div>
                         <div style="font-size:0.9em; margin-top:5px;"><?php echo $c; ?></div>
@@ -93,15 +93,33 @@
     </div>
 
     <div id="uploadModal" class="modal-overlay" onclick="if(event.target==this) closeUploadModalForce()">
-        <div style="background:var(--card-bg); padding:30px; border-radius:15px; width:400px; color:var(--text-main);">
-            <h2 style="margin-top:0;">📤 Upload</h2>
-            <form method="post" enctype="multipart/form-data">
-                <input type="text" name="title" placeholder="Titolo" required style="width:100%; padding:10px; margin-bottom:10px; background:var(--bg); border:1px solid var(--text-sec); color:var(--text-main);">
-                <select name="category" style="width:100%; padding:10px; margin-bottom:10px; background:var(--bg); border:1px solid var(--text-sec); color:var(--text-main);">
-                    <option>Ingegneria</option><option>Medicina</option><option>Architettura</option><option>Chimica</option>
-                </select>
-                <input type="file" name="image" accept=".glb,.gltf" required style="margin-bottom:20px;">
-                <button type="submit" name="upload" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:5px; cursor:pointer;">Carica</button>
+        <div class="modal-upload-content">
+            <span class="close-btn" onclick="closeUploadModalForce()">&times;</span>
+            <div style="padding: 20px 25px; border-bottom: 1px solid var(--input-border);">
+                <h2 style="margin:0;">📤 Nuovo Upload</h2>
+            </div>
+            <form method="post" enctype="multipart/form-data" style="padding-top:20px;">
+                <div class="form-group">
+                    <label>Titolo</label>
+                    <input type="text" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select name="category">
+                        <option>Ingegneria</option><option>Medicina</option><option>Architettura</option><option>Chimica</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>File 3D</label>
+                    <div class="upload-anim-box">
+                      <div class="folder"><div class="front-side"><div class="tip"></div></div><div class="back-side"></div></div>
+                      <label class="custom-file-upload">
+                        <input type="file" name="image" accept=".glb,.gltf" required onchange="updateFileName(this)" />
+                        <span id="file-label-text">Scegli file .glb</span>
+                      </label>
+                    </div>
+                </div>
+                <button type="submit" name="upload" class="btn-submit">Carica Progetto</button>
             </form>
         </div>
     </div>
@@ -109,29 +127,51 @@
     <div id="viewModal" class="modal-overlay" onclick="if(event.target==this) closeViewModalForce()">
         <div class="modal-view-content" onclick="event.stopPropagation()">
             
-            <div style="flex-grow: 1; position: relative; background: var(--modal-bg); display:flex; flex-direction:column;">
-                <div style="padding: 10px 20px; background:var(--card-bg); display:flex; justify-content:space-between; align-items:center;">
-                    <h2 id="modalTitle" style="margin:0; font-size:1.2em;">Titolo</h2>
-                    <span id="modalCategory" style="background:var(--bg); padding:2px 8px; border-radius:4px; font-size:0.8em;">Cat</span>
-                </div>
+            <div class="viewer-section">
                 
-                <model-viewer id="fullViewer" src="" autoplay loop animation-crossfade-duration="0" ar camera-controls shadow-intensity="1" style="width: 100%; height: 100%;">
+                <div style="position:absolute; top:25px; left:30px; z-index:20; pointer-events:none;">
+                    <h2 id="modalTitle" style="margin:0; font-size:1.8em; font-weight:800; text-shadow: 0 2px 10px rgba(255,255,255,0.8); color:#333;">Titolo</h2>
+                    <span id="modalCategory" style="background:rgba(0,0,0,0.7); color:white; padding:4px 12px; border-radius:20px; font-size:0.85em; font-weight:bold;">Cat</span>
+                </div>
+
+                <button onclick="closeViewModalForce()" style="position:absolute; top:20px; right:20px; z-index:50; background:white; border:none; width:40px; height:40px; border-radius:50%; font-size:24px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center;">&times;</button>
+                
+                <model-viewer 
+                    id="fullViewer" 
+                    src="" 
+                    autoplay loop animation-crossfade-duration="0" 
+                    ar camera-controls shadow-intensity="1" 
+                    style="width: 100%; height: 100%; outline:none;"
+                >
                 </model-viewer>
 
-                <div id="animControls" style="display:none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80%; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 20px; display:flex; align-items:center; gap:10px;">
-                    <button id="playPauseBtn" style="border:none; background:var(--primary); color:white; border-radius:50%; width:30px; height:30px; cursor:pointer;">⏸️</button>
-                    <input type="range" id="animSlider" min="0" max="100" value="0" step="0.1" style="flex-grow:1;">
+                <div id="animControls" class="controls-floating-bar" style="display:none;">
+                    <button id="playPauseBtn" class="btn-big-play"><i class="fas fa-pause"></i></button>
+                    <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8em; color:var(--text-sec); margin-bottom:5px; font-weight:600;">
+                            <span>Animazione</span>
+                            <span id="animPercent">0%</span>
+                        </div>
+                        <input type="range" id="animSlider" class="styled-slider" min="0" max="100" value="0" step="0.1">
+                    </div>
                 </div>
             </div>
 
             <div class="chat-container">
-                <div class="chat-header">💬 Commenti</div>
-                <div class="chat-messages" id="chatBox">
-                    <div style="text-align:center; color:#999; margin-top:20px;">Caricamento...</div>
+                <div class="chat-header">
+                    <span style="display:flex; align-items:center; gap:10px;">
+                        <i class="fas fa-comments" style="color:var(--primary);"></i> Community
+                    </span>
                 </div>
+                
+                <div class="chat-messages" id="chatBox">
+                    </div>
+                
                 <div class="chat-input-area">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Scrivi un commento..." onkeypress="if(event.key==='Enter') sendComment()">
-                    <button class="chat-send-btn" onclick="sendComment()"><i class="fas fa-paper-plane"></i></button>
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Scrivi un messaggio..." onkeypress="if(event.key==='Enter') sendComment()">
+                    <button class="chat-send-btn" onclick="sendComment()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
 
@@ -139,23 +179,46 @@
     </div>
 
     <script>
+        // --- 1. DARK MODE ---
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').className = isDark ? 'fas fa-sun icon' : 'fas fa-moon icon';
+        }
+        if (localStorage.getItem('theme') === 'dark') toggleDarkMode();
 
-        // --- 2. GESTIONE VIEWER E CHAT ---
+        // --- 2. UPLOAD UI ---
+        function updateFileName(input) {
+            const label = document.getElementById('file-label-text');
+            if (input.files && input.files.length > 0) label.innerText = "📂 " + input.files[0].name;
+        }
+        function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+        function closeUploadModalForce() { document.getElementById('uploadModal').style.display = 'none'; }
+
+        // --- 3. VIEWER & CONTROLLI PRO ---
         const viewer = document.getElementById('fullViewer');
         const slider = document.getElementById('animSlider');
         const playBtn = document.getElementById('playPauseBtn');
-        let currentFileRef = ""; // Salva il nome del file corrente per la chat
+        const controlsDiv = document.getElementById('animControls');
+        let currentFileRef = "";
+        let isUserDragging = false;
 
         function openViewModal(path, title, category, fileRef) {
             document.getElementById('viewModal').style.display = 'flex';
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalCategory').innerText = category;
             
-            // Reset Viewer
+            // Reset
+            viewer.src = "";
+            slider.value = 0;
+            document.getElementById('animPercent').innerText = "0%";
+            controlsDiv.style.display = 'none';
+            isUserDragging = false;
+
+            // Load
             viewer.src = path;
-            currentFileRef = fileRef; // Importante per la chat!
-            
-            // Carica i commenti per questo progetto
+            currentFileRef = fileRef;
             loadComments();
         }
 
@@ -164,33 +227,80 @@
             viewer.src = "";
         }
 
-        // --- 3. LOGICA CHAT (AJAX) ---
+        // --- GESTIONE ANIMAZIONE ---
+        viewer.addEventListener('load', () => {
+            const anims = viewer.availableAnimations;
+            if(anims.length > 0) {
+                controlsDiv.style.display = 'flex';
+                viewer.animationName = anims[0];
+                viewer.play();
+                updatePlayBtnUI(true);
+                loopSlider();
+            } else {
+                controlsDiv.style.display = 'none';
+            }
+        });
+
+        // Loop per muovere slider
+        function loopSlider() {
+            if(!isUserDragging && !viewer.paused && viewer.duration > 0) {
+                const pct = (viewer.currentTime / viewer.duration) * 100;
+                slider.value = pct;
+                document.getElementById('animPercent').innerText = Math.round(pct) + "%";
+            }
+            requestAnimationFrame(loopSlider);
+        }
+
+        // Interazione Utente
+        slider.addEventListener('input', (e) => {
+            isUserDragging = true;
+            viewer.pause();
+            updatePlayBtnUI(false);
+            const val = e.target.value;
+            viewer.currentTime = (viewer.duration * val) / 100;
+            document.getElementById('animPercent').innerText = Math.round(val) + "%";
+        });
+        
+        slider.addEventListener('change', () => { isUserDragging = false; });
+
+        playBtn.addEventListener('click', () => {
+            if(viewer.paused) { viewer.play(); updatePlayBtnUI(true); }
+            else { viewer.pause(); updatePlayBtnUI(false); }
+        });
+
+        function updatePlayBtnUI(isPlaying) {
+            if (isPlaying) {
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>'; 
+                playBtn.style.background = "linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%)";
+            } else {
+                playBtn.innerHTML = '<i class="fas fa-play" style="margin-left:3px;"></i>';
+                playBtn.style.background = "linear-gradient(135deg, #4a90e2 0%, #357abd 100%)";
+            }
+        }
+
+        // --- 4. CHAT (AJAX) ---
         function loadComments() {
             const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML = "<div style='text-align:center; padding:20px;'>Caricamento...</div>";
+            chatBox.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Caricamento...</div>";
 
             const formData = new FormData();
             formData.append('action', 'load');
             formData.append('path', currentFileRef);
 
             fetch('api_comments.php', { method: 'POST', body: formData })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 chatBox.innerHTML = "";
-                if(data.length === 0) {
-                    chatBox.innerHTML = "<div style='text-align:center; color:var(--text-sec); margin-top:20px;'>Nessun commento. Sii il primo!</div>";
-                    return;
-                }
+                if(data.length === 0) chatBox.innerHTML = "<div style='text-align:center; color:var(--text-sec); margin-top:30px;'>Nessun commento.</div>";
                 data.forEach(msg => {
                     chatBox.innerHTML += `
                         <div class="message">
                             <div class="msg-user">${msg.username}</div>
                             <div class="msg-text">${msg.comment}</div>
                             <div class="msg-time">${msg.created_at}</div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-                chatBox.scrollTop = chatBox.scrollHeight; // Scrolldown automatico
+                chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
 
@@ -205,50 +315,11 @@
             formData.append('comment', text);
 
             fetch('api_comments.php', { method: 'POST', body: formData })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                if(data.status === 'success') {
-                    input.value = ""; // Pulisci input
-                    loadComments(); // Ricarica commenti
-                } else {
-                    alert("Errore nell'invio o sessione scaduta.");
-                }
+                if(data.status === 'success') { input.value = ""; loadComments(); }
             });
         }
-
-        // --- 4. GESTIONE ANIMAZIONE (Slider & Play) ---
-        viewer.addEventListener('load', () => {
-            const anims = viewer.availableAnimations;
-            const controls = document.getElementById('animControls');
-            if(anims.length > 0) {
-                controls.style.display = 'flex';
-                viewer.animationName = anims[0];
-                viewer.play();
-                loopSlider();
-            } else {
-                controls.style.display = 'none';
-            }
-        });
-
-        let isDragging = false;
-        function loopSlider() {
-            if(!isDragging && !viewer.paused && viewer.duration > 0) {
-                slider.value = (viewer.currentTime / viewer.duration) * 100;
-            }
-            requestAnimationFrame(loopSlider);
-        }
-        slider.addEventListener('input', (e) => {
-            isDragging = true; viewer.pause();
-            viewer.currentTime = (viewer.duration * e.target.value) / 100;
-        });
-        slider.addEventListener('change', () => { isDragging = false; });
-        playBtn.addEventListener('click', () => {
-            if(viewer.paused) viewer.play(); else viewer.pause();
-        });
-
-        // Funzioni modale upload
-        function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
-        function closeUploadModalForce() { document.getElementById('uploadModal').style.display = 'none'; }
     </script>
 </body>
 </html>
