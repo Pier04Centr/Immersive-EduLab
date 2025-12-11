@@ -45,6 +45,57 @@
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* 1. Placeholder statico per la griglia (Migliora performance) */
+        .model-placeholder {
+            width: 100%;
+            height: 240px;
+            background: var(--modal-bg); /* Usa il colore del tema */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-sec);
+            transition: background 0.3s;
+        }
+        .model-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+            transition: transform 0.3s;
+        }
+        .card:hover .model-placeholder i {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        /* 2. Bottone AR Personalizzato (Posizionato in ALTO A SINISTRA) */
+        .ar-custom-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px; /* Qui non dà fastidio né alla X né allo slider */
+            background-color: white;
+            border-radius: 30px;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 50; /* Sopra al modello */
+        }
+        
+        /* Adattamenti Mobile per lo slider */
+        @media (max-width: 600px) {
+            .controls-floating-bar {
+                bottom: 20px; /* Un po' più in basso su mobile */
+                width: 95%;   /* Più largo su mobile */
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -82,7 +133,12 @@
                     $f = $row['path']; 
             ?>
                 <div class='card' onclick="openViewModal('<?php echo $path; ?>', '<?php echo $t; ?>', '<?php echo $c; ?>', '<?php echo $f; ?>')">
-                    <model-viewer src="<?php echo $path; ?>" auto-rotate rotation-per-second="30deg" interaction-prompt="none" disable-zoom shadow-intensity="1" style="pointer-events: none; width:100%; height:240px; background:var(--modal-bg);"></model-viewer>
+                    
+                    <div class="model-placeholder">
+                        <i class="fas fa-cube"></i>
+                        <span style="font-size:0.8em;">Clicca per visualizzare</span>
+                    </div>
+
                     <div class='card-info'>
                         <div style="font-weight:700; font-size:1.1em;"><?php echo $t; ?></div>
                         <div style="font-size:0.9em; margin-top:5px;"><?php echo $c; ?></div>
@@ -140,9 +196,13 @@
                     id="fullViewer" 
                     src="" 
                     autoplay loop animation-crossfade-duration="0" 
-                    ar camera-controls shadow-intensity="1" 
+                    ar ar-modes="webxr scene-viewer quick-look" 
+                    camera-controls shadow-intensity="1" 
                     style="width: 100%; height: 100%; outline:none;"
                 >
+                    <button slot="ar-button" class="ar-custom-btn">
+                        <i class="fas fa-cube"></i> Vedi in AR
+                    </button>
                 </model-viewer>
 
                 <div id="animControls" class="controls-floating-bar" style="display:none;">
@@ -165,7 +225,7 @@
                 </div>
                 
                 <div class="chat-messages" id="chatBox">
-                    </div>
+                </div>
                 
                 <div class="chat-input-area">
                     <input type="text" id="chatInput" class="chat-input" placeholder="Scrivi un messaggio..." onkeypress="if(event.key==='Enter') sendComment()">
@@ -203,7 +263,7 @@
         const controlsDiv = document.getElementById('animControls');
         let currentFileRef = "";
         let isUserDragging = false;
-
+            
         function openViewModal(path, title, category, fileRef) {
             document.getElementById('viewModal').style.display = 'flex';
             document.getElementById('modalTitle').innerText = title;
@@ -216,7 +276,7 @@
             controlsDiv.style.display = 'none';
             isUserDragging = false;
 
-            // Load
+            // Load (Qui avviene il caricamento vero del 3D)
             viewer.src = path;
             currentFileRef = fileRef;
             loadComments();
@@ -226,7 +286,7 @@
             document.getElementById('viewModal').style.display = 'none';
             viewer.src = "";
         }
-
+        
         // --- GESTIONE ANIMAZIONE ---
         viewer.addEventListener('load', () => {
             const anims = viewer.availableAnimations;
@@ -240,7 +300,7 @@
                 controlsDiv.style.display = 'none';
             }
         });
-
+        
         // Loop per muovere slider
         function loopSlider() {
             if(!isUserDragging && !viewer.paused && viewer.duration > 0) {
