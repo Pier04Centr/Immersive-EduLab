@@ -35,7 +35,7 @@ ALTER TABLE `utenti`
 TRUNCATE TABLE `utenti`;
 
 INSERT INTO `utenti` (`Username`, `Nome`, `Cognome`, `Email`, `Password`) VALUES
-('test', 'Mario', 'Rossi','test@mail.com', sha1('P@ssw0rd1'));
+('test', 'Mario', 'Rossi','test@mail.com', 'dce2a1d10cad7aaad66071106262fa4c5f5d0f7a102a723422174d80a303f6f021048446f1c9a7de16bc6a8285d650f8c2ccf523ee0fe70ded7a55d331bc61b0');
 
 
 COMMIT;

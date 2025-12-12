@@ -58,7 +58,7 @@ INSERT INTO `gallary` (`title`, `category`, `path`) VALUES
 ('Iphone 12 Teadown', 'Ingegneria', 'iphone_12_teardown.glb'),
 ('Motore a Scoppio', 'Ingegneria', 'engine_work.glb'),
 ('Interno motore', 'Ingegneria', 'engine_exloded_view.glb'),
-('Funzionamento Penna', 'Ingegneria', 'click_pen_mechanism.glb'),
+('Funzionamento Penna', 'Ingegneria', 'click_pen_mechanism.glb');
 
 COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
