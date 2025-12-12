@@ -57,7 +57,7 @@ INSERT INTO `gallary` (`title`, `category`, `path`) VALUES
 ('Blocco Motore V8', 'Ingegneria', 'disassembled_v8_engine_block.glb'),
 ('Iphone 12 Teadown', 'Ingegneria', 'iphone_12_teardown.glb'),
 ('Motore a Scoppio', 'Ingegneria', 'engine_work.glb'),
-('Interno motore', 'Ingegneria', 'engine_exloded_view.glb'),
+('Interno motore', 'Ingegneria', 'engine_exploded_view.glb'),
 ('Funzionamento Penna', 'Ingegneria', 'click_pen_mechanism.glb');
 
 COMMIT;
