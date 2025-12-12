@@ -3,18 +3,19 @@
     session_start();
     error_reporting(E_ALL); 
 
+    // Controllo Accesso
     if (!isset($_SESSION['username'])) {
         header("Location: ../login/index.php");
         exit();
     }
     
-    // Messaggi Upload
+    // Gestione Messaggi
     $msg = "";
     if (isset($_SESSION['upload_msg'])) {
         $msg = $_SESSION['upload_msg']; unset($_SESSION['upload_msg']); 
     }
 
-    // LOGICA UPLOAD
+    // LOGICA UPLOAD FILE
     if(isset($_POST["upload"])){
         $title = mysqli_real_escape_string($conn, $_POST["title"]);
         $category = mysqli_real_escape_string($conn, $_POST["category"]);
@@ -42,60 +43,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Immersive EduLab</title>
+    
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 
-    <style>
-        /* 1. Placeholder statico per la griglia (Migliora performance) */
-        .model-placeholder {
-            width: 100%;
-            height: 240px;
-            background: var(--modal-bg); /* Usa il colore del tema */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-sec);
-            transition: background 0.3s;
-        }
-        .model-placeholder i {
-            font-size: 4rem;
-            margin-bottom: 10px;
-            color: var(--primary);
-            transition: transform 0.3s;
-        }
-        .card:hover .model-placeholder i {
-            transform: scale(1.1) rotate(10deg);
-        }
-
-        /* 2. Bottone AR Personalizzato (Posizionato in ALTO A SINISTRA) */
-        .ar-custom-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px; /* Qui non dà fastidio né alla X né allo slider */
-            background-color: white;
-            border-radius: 30px;
-            border: none;
-            padding: 8px 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 50; /* Sopra al modello */
-        }
-        
-        /* Adattamenti Mobile per lo slider */
-        @media (max-width: 600px) {
-            .controls-floating-bar {
-                bottom: 20px; /* Un po' più in basso su mobile */
-                width: 95%;   /* Più largo su mobile */
-                padding: 10px;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -118,7 +70,6 @@
             <a href="index.php" class="filter-btn">Tutti</a>
             <a href="?category=Ingegneria" class="filter-btn">Ingegneria</a>
             <a href="?category=Medicina" class="filter-btn">Medicina</a>
-            <a href="?category=Architettura" class="filter-btn">Architettura</a>
             <a href="?category=Chimica" class="filter-btn">Chimica</a>
         </div>
 
@@ -134,10 +85,16 @@
             ?>
                 <div class='card' onclick="openViewModal('<?php echo $path; ?>', '<?php echo $t; ?>', '<?php echo $c; ?>', '<?php echo $f; ?>')">
                     
-                    <div class="model-placeholder">
-                        <i class="fas fa-cube"></i>
-                        <span style="font-size:0.8em;">Clicca per visualizzare</span>
-                    </div>
+                    <model-viewer 
+                        src="<?php echo $path; ?>" 
+                        loading="lazy" 
+                        reveal="auto"
+                        interaction-prompt="none" 
+                        disable-zoom 
+                        shadow-intensity="1" 
+                        
+                        style="pointer-events: none; width:100%; height:240px; background:var(--modal-bg);">
+                    </model-viewer>
 
                     <div class='card-info'>
                         <div style="font-weight:700; font-size:1.1em;"><?php echo $t; ?></div>
@@ -162,7 +119,9 @@
                 <div class="form-group">
                     <label>Categoria</label>
                     <select name="category">
-                        <option>Ingegneria</option><option>Medicina</option><option>Architettura</option><option>Chimica</option>
+                        <option>Ingegneria</option>
+                        <option>Medicina</option>
+                        <option>Chimica</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -185,9 +144,8 @@
             
             <div class="viewer-section">
                 
-                <div style="position:absolute; top:25px; left:30px; z-index:20; pointer-events:none;">
-                    <h2 id="modalTitle" style="margin:0; font-size:1.8em; font-weight:800; text-shadow: 0 2px 10px rgba(255,255,255,0.8); color:#333;">Titolo</h2>
-                    <span id="modalCategory" style="background:rgba(0,0,0,0.7); color:white; padding:4px 12px; border-radius:20px; font-size:0.85em; font-weight:bold;">Cat</span>
+                <div class="floating-title">
+                    <h2 id="modalTitle">Titolo</h2>
                 </div>
 
                 <button onclick="closeViewModalForce()" style="position:absolute; top:20px; right:20px; z-index:50; background:white; border:none; width:40px; height:40px; border-radius:50%; font-size:24px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center;">&times;</button>
@@ -195,13 +153,21 @@
                 <model-viewer 
                     id="fullViewer" 
                     src="" 
+                    
                     autoplay loop animation-crossfade-duration="0" 
+                    
+                    camera-orbit="auto auto 300%"
+                    min-camera-orbit="auto auto 100%"
+                    max-camera-orbit="auto auto 500%"
+                    
+                    field-of-view="45deg"
+                    
                     ar ar-modes="webxr scene-viewer quick-look" 
                     camera-controls shadow-intensity="1" 
                     style="width: 100%; height: 100%; outline:none;"
                 >
                     <button slot="ar-button" class="ar-custom-btn">
-                        <i class="fas fa-cube"></i> Vedi in AR
+                        <i class="fas fa-cube"></i> AR
                     </button>
                 </model-viewer>
 
@@ -224,8 +190,7 @@
                     </span>
                 </div>
                 
-                <div class="chat-messages" id="chatBox">
-                </div>
+                <div class="chat-messages" id="chatBox"></div>
                 
                 <div class="chat-input-area">
                     <input type="text" id="chatInput" class="chat-input" placeholder="Scrivi un messaggio..." onkeypress="if(event.key==='Enter') sendComment()">
@@ -256,7 +221,7 @@
         function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
         function closeUploadModalForce() { document.getElementById('uploadModal').style.display = 'none'; }
 
-        // --- 3. VIEWER & CONTROLLI PRO ---
+        // --- 3. VIEWER LOGIC ---
         const viewer = document.getElementById('fullViewer');
         const slider = document.getElementById('animSlider');
         const playBtn = document.getElementById('playPauseBtn');
@@ -267,7 +232,7 @@
         function openViewModal(path, title, category, fileRef) {
             document.getElementById('viewModal').style.display = 'flex';
             document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalCategory').innerText = category;
+            // Categoria rimossa dal JS
             
             // Reset
             viewer.src = "";
@@ -276,7 +241,7 @@
             controlsDiv.style.display = 'none';
             isUserDragging = false;
 
-            // Load (Qui avviene il caricamento vero del 3D)
+            // Load
             viewer.src = path;
             currentFileRef = fileRef;
             loadComments();
@@ -287,7 +252,7 @@
             viewer.src = "";
         }
         
-        // --- GESTIONE ANIMAZIONE ---
+        // --- ANIMAZIONE ---
         viewer.addEventListener('load', () => {
             const anims = viewer.availableAnimations;
             if(anims.length > 0) {
@@ -301,7 +266,6 @@
             }
         });
         
-        // Loop per muovere slider
         function loopSlider() {
             if(!isUserDragging && !viewer.paused && viewer.duration > 0) {
                 const pct = (viewer.currentTime / viewer.duration) * 100;
@@ -311,7 +275,6 @@
             requestAnimationFrame(loopSlider);
         }
 
-        // Interazione Utente
         slider.addEventListener('input', (e) => {
             isUserDragging = true;
             viewer.pause();
