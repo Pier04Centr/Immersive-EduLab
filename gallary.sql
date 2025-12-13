@@ -48,10 +48,12 @@ INSERT INTO `gallary` (`title`, `category`, `path`) VALUES
 ('Corona Virus Covid-19', 'Medicina', 'corona_virus_covid-19.glb'),
 ('Cuore Umano', 'Medicina', 'heart.glb'),
 ('Teschio Umano', 'Medicina', 'exploding_skull.glb'),
+('Parti Occhio Umano', 'Medicina', 'eye_parts.glb'),
 
 -- CHIMICA (Strutture molecolari)
 ('Reticolo Cristallino Ghiaccio', 'Chimica', 'ice_lattice.glb'),
 ('Struttura Molecolare CO2', 'Chimica', 'co2.glb'),
+('Idrolisi amido', 'Chimica', 'starch_hydrolysis.glb'),
 
 -- INGEGNERIA (Motori e Auto)
 ('Blocco Motore V8', 'Ingegneria', 'disassembled_v8_engine_block.glb'),
