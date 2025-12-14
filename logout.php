@@ -9,6 +9,6 @@
 
     // 3. Reindirizza alla pagina di Login (index.php dentro la cartella login)
     // Nota: Non reindirizzare a 'personal.php' perché senza sessione ti darebbe errore.
-    header("Location: index.php"); 
+    header("Location: ..\index.html"); 
     exit();
 ?>

@@ -7,7 +7,6 @@ body {
     background-color: var(--bg) !important;
     color: var(--text-main) !important;
     transition: background-color 0.3s ease, color 0.3s ease;
-    /* Il padding-left: 80px viene ereditato da style.css della galleria */
 }
 
 /* --- Card Profilo --- */

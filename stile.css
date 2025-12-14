@@ -1,212 +1,207 @@
-@import url('https://fonts.googleapis.com/css?family=Poppins:200, 300,40e, 500,600, 700,8e0,900&display=swap');
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+/* ========================================= */
+/* 1. VARIABILI (Stesse della Dashboard)     */
+/* ========================================= */
+:root {
+    --bg-color: #050505;
+    --bg-gradient: radial-gradient(circle at center, #111822 0%, #050505 100%);
+    --primary: #00f3ff;          /* Ciano per Login */
+    --secondary: #ffcc00;        /* Giallo per Sign Up */
+    --text-main: #ffffff;
+    --text-sec: #cccccc;
+    --card-bg: rgba(10, 14, 20, 0.95);
+    --card-border: rgba(0, 243, 255, 0.3);
+    --input-bg: rgba(0, 0, 0, 0.5);
+    --shadow: 0 0 20px rgba(0, 243, 255, 0.15);
 }
+
+/* ========================================= */
+/* 2. SETUP GENERALE                         */
+/* ========================================= */
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace; /* Font Terminale */
+}
+
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; justify-content: center; align-items: center;
     min-height: 100vh;
-    background: #0e0e0ebd;
+    background: var(--bg-color);
+    background-image: var(--bg-gradient);
     transition: 0.5s;
+    overflow: hidden; /* Evita scrollbars durante animazioni */
 }
 
-body.active{
-    background-color: #e0e0e0;
+/* Effetto Scanlines Sfondo */
+body::before {
+    content: " "; display: block; position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 1; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.2;
 }
-.container
-{
-   position: relative;
-   width: 800px;
-   height: 500px;
-   margin: 20px;
+
+/* Quando si passa a Sign Up (Body Active) cambiamo leggermente l'atmosfera */
+body.active {
+    background: #0a0500; /* Nero leggermente caldo */
 }
+
+.container {
+    position: relative; width: 800px; height: 500px; margin: 20px;
+    z-index: 10;
+}
+
+/* ========================================= */
+/* 3. SFONDO STATICO (BlueBg -> AccessPanel) */
+/* ========================================= */
 .blueBg {
-   position: absolute;
-   top: 40px;
-   width: 100%;
-   height: 420px;
-   background: rgba(255,255,255,0.2);
-   display: flex;
-   justify-content: center;
-   align-items: center;
-}
-
-.blueBg {
-    position: absolute;
-    top: 40px;
-    width: 100%;
-    height: 420px;
-    background: rgba(255,255,255,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.blueBg.active {
-    background: rgba(0,0,0,0.2);
+    position: absolute; top: 40px; width: 100%; height: 420px;
+    background: rgba(255, 255, 255, 0.05); /* Vetro scuro */
+    border: 1px solid var(--card-border);
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition: 0.5s;
 }
 
 .blueBg .box {
-    position: relative;
-    width: 50%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    position: relative; width: 50%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    flex-direction: column; text-align: center;
 }
+
 .blueBg .box h2 {
-    color: #fff;
-    font-size: 1.2em;
-    font-weight: 500;
-    margin-bottom: 10px;
+    color: var(--text-main); font-size: 1.2em; 
+    font-weight: bold; margin-bottom: 15px;
+    text-transform: uppercase; letter-spacing: 1px;
 }
 
+/* Bottoni di Switch (Sign In / Sign Up) */
 button {
-    padding: 10px 20px;
-    background: #fff;
-    color: #333;
-    font-size: 16px;
-    font-weight: 500;
-    border: none;
+    padding: 10px 25px;
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    font-size: 14px; font-weight: bold; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 2px;
+    transition: 0.3s;
 }
 
-.formBx{
-    position: absolute;
-    top: 0;
-    Left: 0;
-    width: 50%;
-    height: 100%;
-    background: #fff;
+button:hover {
+    background: var(--primary); color: #000;
+    box-shadow: 0 0 15px var(--primary);
+}
+
+/* Stile specifico per il lato Sign Up (Giallo) */
+.blueBg .box.signup button {
+    color: var(--secondary); border-color: var(--secondary);
+}
+.blueBg .box.signup button:hover {
+    background: var(--secondary); color: #000; box-shadow: 0 0 15px var(--secondary);
+}
+
+/* ========================================= */
+/* 4. BOX SCORREVOLE (FormBx)                */
+/* ========================================= */
+.formBx {
+    position: absolute; top: 0; left: 0; width: 50%; height: 100%;
+    background: var(--card-bg); /* Sfondo scuro quasi opaco */
+    border: 1px solid var(--primary);
     z-index: 900;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 5px 45px rgba(0,0,0,0.25);
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8); /* Ombra profonda */
     transition: 0.5s ease-in-out;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
-.formBx.active {
-   left: 50%;
-}
+
+/* Cambio colore bordo quando è attivo (Sign Up) */
+.formBx.active { left: 50%; border-color: var(--secondary); }
 
 .formBx .form {
-    position: absolute;
-    Left: 0;
-    width: 100%;
-    padding: 50px;
-    transition: 0.5s;
+    position: absolute; left: 0; width: 100%; padding: 50px; transition: 0.5s;
 }
 
-.formBx .signinForm {
-    transition-delay: 0.25s;
-}
+.formBx .signinForm { transition-delay: 0.25s; }
+.formBx.active .signinForm { left: -100%; transition-delay: 0s; }
 
-.formBx.active .signinForm {
-    Left: -100%;
-    transition-delay: 0.5;
-}
+.formBx .signupForm { left: 100%; transition-delay: 0s; }
+.formBx.active .signupForm { left: 0; transition-delay: 0.25s; }
 
-.formBx .signupForm {
-    Left: 100%;
-    transition-delay: 0.5;
-}
-.formBx.active .signupForm {
-    Left: 0;
-    transition-delay: 0.25s;
-}
 .formBx .form form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    width: 100%; display: flex; flex-direction: column;
 }
 
 .formBx .form form h3 {
-    font-size: 1.5em;
-    color:#333;
-    margin-bottom: 20px;
-    font-weight: 500;
+    font-size: 2em; color: var(--primary);
+    margin-bottom: 25px; font-weight: bold;
+    text-transform: uppercase; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
 }
+
+/* Cambio colore titolo per Sign Up */
+.formBx.active .form form h3 { color: var(--secondary); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+
+/* Input Fields stile Terminale */
 .formBx .form form input {
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 8px;
-    outline: none;
-    font-size: 16px;
-    border: 1px solid #333;
-}
-
-.formBx .form form input[type="submit"] {
-    background: #0e0e0e;
-    border: none;
+    width: 100%; margin-bottom: 20px; padding: 12px;
+    outline: none; font-size: 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
     color: #fff;
-    max-width: 100px;
+    transition: 0.3s;
 }
 
+.formBx .form form input::placeholder { color: #666; }
+
+.formBx .form form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+/* Pulsante Submit */
+.formBx .form form input[type="submit"] {
+    background: transparent; border: 2px solid var(--primary);
+    color: var(--primary); font-weight: bold; cursor: pointer;
+    max-width: 120px; text-transform: uppercase; letter-spacing: 1px;
+}
+.formBx .form form input[type="submit"]:hover {
+    background: var(--primary); color: #000;
+    box-shadow: 0 0 15px var(--primary);
+}
+
+/* Pulsante Submit Sign Up (Giallo) */
 .formBx.active .signupForm input[type="submit"] {
-    background: #e0e0e0;
-    color: #000;
+    border-color: var(--secondary); color: var(--secondary);
+}
+.formBx.active .signupForm input[type="submit"]:hover {
+    background: var(--secondary); color: #000;
+    box-shadow: 0 0 15px var(--secondary);
 }
 
-.formBx .form form .forgot {
-    color: #333;
-}
+.formBx .form form .forgot { color: #888; text-decoration: none; font-size: 0.8em; margin-top: 10px; }
+.formBx .form form .forgot:hover { color: var(--primary); }
 
-/* Feedback visivo input */
+/* Validazione Input */
 input.valid {
-    border: 2px solid #2ecc71 !important; /* Verde */
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%232ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
+    border-color: #00ff00 !important;
+    box-shadow: 0 0 5px #00ff00;
 }
-
 input.invalid {
-    border: 2px solid #e74c3c !important; /* Rosso */
+    border-color: #ff0055 !important;
+    box-shadow: 0 0 5px #ff0055;
 }
 
-/* Un piccolo testo di aiuto che appare sotto */
 #pwd-hint {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 5px;
-    display: none; /* Nascosto di base */
+    font-size: 0.7em; margin-top: -10px; margin-bottom: 15px;
+    color: #888; display: none;
 }
 
+/* ========================================= */
+/* 5. RESPONSIVE                             */
+/* ========================================= */
 @media only screen and (max-width: 991px) {
-    .container {
-        max-width: 400px;
-        height: 650px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .container .blueBg {
-        top: 0;
-        height: 100%;
-    }
-    .formBx {
-        width: 100%;
-        height: 500px;
-        top: 0;
-    }
-    .blueBg .box {
-        position: absolute;
-        width: 100%;
-        height: 150px;
-        bottom: 0;
-    }
-    .box.signin {
-        top: 0;
-    }
-    .formBx.active {
-        left: 0;
-        top: 150px;
-    }
+    .container { max-width: 400px; height: 650px; display: flex; justify-content: center; align-items: center; }
+    .container .blueBg { top: 0; height: 100%; }
+    .formBx { width: 100%; height: 500px; top: 0; box-shadow: none; border: none; background: rgba(0,0,0,0.95); }
+    .blueBg .box { position: absolute; width: 100%; height: 150px; bottom: 0; }
+    .box.signin { top: 0; }
+    .formBx.active { left: 0; top: 150px; }
 }
-
