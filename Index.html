@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduLab</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="homepage/stile.css">
 </head>
 <body>
@@ -17,14 +18,51 @@
     </div>
 
     <div id="main-site" style="display: none;">
-        <h1>IMMERSIVE EDULAB</h1>
-        <p>Piattaforma Web per la Didattica Immersiva & AR Markerless</p>
-        <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
-            Powered by Centrone P., Dagostino D.
-        </p>
-        <a href="./login/index.php" style="text-decoration: none;">
-            <button class="btn-enter">ACCEDI AL REPOSITORY</button>
-        </a>
+        
+        <header class="hud-header">
+            <h1>IMMERSIVE EDULAB</h1>
+            <div class="subtitle">PIATTAFORMA DIDATTICA WEBXR & AR MARKERLESS</div>
+        </header>
+
+        <div class="hud-grid">
+            
+            <div class="hud-card">
+                <div class="card-icon"><i class="fa-solid fa-cube"></i></div>
+                <h3>DALLA STATICA ALL'IMMERSIONE</h3>
+                <p>Superiamo i limiti delle slide tradizionali. EduLab permette la manipolazione spaziale e temporale di modelli 3D complessi per facoltà STEM.</p>
+            </div>
+
+            <div class="hud-card">
+                <div class="card-icon"><i class="fa-brands fa-docker"></i></div>
+                <h3>ARCHITETTURA CONTAINERIZZATA</h3>
+                <p>Basato su Docker e stack LAMP. Rendering nativo via browser (WebGL) senza engine pesanti, per un accesso immediato e performante.</p>
+            </div>
+
+            <div class="hud-card">
+                <div class="card-icon"><i class="fa-solid fa-vr-cardboard"></i></div>
+                <h3>SOCIAL LEARNING & AR</h3>
+                <p>Proietta i modelli nell'ambiente reale con WebXR. Collabora in tempo reale tramite chat contestuali integrate nel visualizzatore.</p>
+            </div>
+
+        </div>
+
+        <div class="cta-container">
+            <a href="./login/index.php" class="btn-enter">
+                <i class="fa-solid fa-terminal"></i> ACCEDI AL REPOSITORY
+            </a>
+            <div class="system-status">
+                <span class="status-light"></span> SYSTEM ONLINE
+            </div>
+        </div>
+
+        <footer class="hud-footer">
+            <div class="authors">
+                <p>SYSTEM ARCHITECTS:</p>
+                <span class="author-name">CENTRONE P.</span> // <span class="author-name">DAGOSTINO D.</span>
+            </div>
+            <div class="version">v.1.0.4 | ING. SOFTWARE</div>
+        </footer>
+
     </div>
 
     <script src="homepage/script.js"></script>

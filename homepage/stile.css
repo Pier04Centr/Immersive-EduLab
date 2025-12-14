@@ -135,3 +135,178 @@ p { max-width: 600px; line-height: 1.6; color: #ccc; }
     font-family: inherit; font-weight: bold; cursor: pointer; transition: all 0.3s;
 }
 .btn-enter:hover { background: #00f3ff; color: #000; box-shadow: 0 0 15px #00f3ff; }
+
+
+/* --- FASE 3: DASHBOARD STYLE --- */
+#main-site {
+    display: none; 
+    height: 100%;
+    width: 100%;
+    /* Flex per centrare verticalmente, ma contenuto gestito a griglia */
+    display: flex; 
+    flex-direction: column;
+    justify-content: space-between; /* Distribuisce header, contenuto e footer */
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle at center, #111822 0%, #050505 100%);
+    padding: 2rem;
+    overflow-y: auto; /* Permette scroll se lo schermo è piccolo */
+}
+
+/* HEADER */
+.hud-header {
+    margin-top: 2rem;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+    padding-bottom: 1rem;
+    width: 100%;
+    max-width: 1000px;
+}
+
+h1 { 
+    font-size: 3rem; 
+    margin-bottom: 0.5rem; 
+    text-shadow: 0 0 15px rgba(0, 243, 255, 0.6); 
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: #ffcc00; /* Giallo tecnico */
+    font-size: 1rem;
+    letter-spacing: 3px;
+    font-weight: bold;
+}
+
+/* GRID SYSTEM */
+.hud-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonne */
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem 0;
+}
+
+/* CARD DESIGN */
+.hud-card {
+    background: rgba(0, 243, 255, 0.05); /* Sfondo ciano leggerissimo */
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    padding: 20px;
+    text-align: left;
+    transition: all 0.3s ease;
+    position: relative;
+    /* Angoli tagliati stile sci-fi */
+    clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+}
+
+.hud-card:hover {
+    background: rgba(0, 243, 255, 0.1);
+    border-color: #00f3ff;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    font-size: 2rem;
+    color: #00f3ff;
+    margin-bottom: 1rem;
+}
+
+.hud-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: #fff;
+    text-transform: uppercase;
+    border-left: 3px solid #00f3ff;
+    padding-left: 10px;
+}
+
+.hud-card p {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.5;
+}
+
+/* CTA & STATUS */
+.cta-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 2rem;
+}
+
+.btn-enter {
+    padding: 15px 40px;
+    background: transparent;
+    border: 2px solid #00f3ff;
+    color: #00f3ff;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.btn-enter:hover {
+    background: #00f3ff;
+    color: #000;
+    box-shadow: 0 0 25px #00f3ff;
+}
+
+.system-status {
+    font-size: 0.8rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-light {
+    width: 8px; height: 8px;
+    background-color: #00ff00;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #00ff00;
+}
+
+/* FOOTER */
+.hud-footer {
+    width: 100%;
+    max-width: 1000px;
+    border-top: 1px solid #333;
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.author-name {
+    color: #ddd;
+    font-weight: bold;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .hud-grid {
+        grid-template-columns: 1fr; /* Una colonna su mobile */
+    }
+    
+    h1 { font-size: 2rem; }
+    
+    .hud-card {
+        text-align: center;
+        clip-path: none; /* Rimuovi angoli tagliati su mobile per semplicità */
+        border-radius: 5px;
+    }
+    
+    .hud-card h3 { border-left: none; padding-left: 0; }
+    
+    .hud-footer {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+}
