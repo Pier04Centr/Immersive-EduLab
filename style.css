@@ -1,308 +1,373 @@
 /* ========================================= */
-/* 1. VARIABILI & DARK MODE                  */
+/* 1. VARIABILI & TEMI (ALLINEATI ALLA HOME) */
 /* ========================================= */
 :root {
-    --primary: #4a90e2;
-    --primary-hover: #357abd;
-    --bg: #f4f7f6;
-    --card-bg: #ffffff;
-    --text-main: #333333;
-    --text-sec: #666666;
-    --modal-bg: #f0f0f0;
-    --sidebar-bg: rgb(27, 133, 219);
+    /* --- LIGHT MODE (Clean Lab Style) --- */
+    --primary: #0066cc;          /* Blu tecnico solido */
+    --primary-hover: #004488;    /* Blu più scuro */
+    --accent-glow: rgba(0, 102, 204, 0.3);
+    
+    --bg: #f0f4f8;
+    --bg-gradient: radial-gradient(circle at center, #ffffff 0%, #e1e9f0 100%);
+    
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-border: #ccddee;
+    
+    --text-main: #004488;        /* Testo primario blu tecnico */
+    --text-sec: #445566;         /* Grigio scuro */
+    
+    --modal-bg: #ffffff;
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #ccddee;
+    
     --input-bg: #ffffff;
-    --input-border: #eeeeee;
-    --chat-bg: #ffffff;
-    --shadow: rgba(0,0,0,0.1);
+    --input-border: #ccddee;
+    --chat-bg: #f9fbfd;
+    --shadow: rgba(0, 0, 0, 0.05);
 }
 
 body.dark-mode {
-    --primary: #5ca1e6;
-    --primary-hover: #7ab3eb;
-    --bg: #121212;
-    --card-bg: #1e1e1e;
-    --text-main: #e0e0e0;
-    --text-sec: #a0a0a0;
-    --modal-bg: #181818;
-    --sidebar-bg: #2c2c2c;
-    --input-bg: #2c2c2c;
-    --input-border: #444444;
-    --chat-bg: #1e1e1e;
-    --shadow: rgba(0,0,0,0.5);
+    /* --- DARK MODE (Cyberpunk/EduLab Style) --- */
+    --primary: #00f3ff;          /* Ciano Neon */
+    --primary-hover: #00c2cc;
+    --accent-glow: rgba(0, 243, 255, 0.4);
+    
+    --bg: #050505;
+    --bg-gradient: radial-gradient(circle at center, #111822 0%, #050505 100%);
+    
+    --card-bg: rgba(0, 243, 255, 0.05); /* Sfondo semitrasparente ciano */
+    --card-border: rgba(0, 243, 255, 0.2);
+    
+    --text-main: #00f3ff;        /* Testo ciano */
+    --text-sec: #cccccc;         /* Grigio chiaro */
+    
+    --modal-bg: #0a0e14;
+    --sidebar-bg: rgba(10, 14, 20, 0.9);
+    --sidebar-border: rgba(0, 243, 255, 0.3);
+    
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --input-border: rgba(0, 243, 255, 0.3);
+    --chat-bg: #0a0e14;
+    --shadow: rgba(0, 243, 255, 0.1);
 }
 
 /* ========================================= */
-/* 2. SETUP GENERALE                         */
+/* 2. SETUP GENERALE & TIPOGRAFIA            */
 /* ========================================= */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg);
+    font-family: 'Courier New', Courier, monospace; /* FONT DEL TERMINALE */
+    background: var(--bg); /* Fallback */
+    background-image: var(--bg-gradient);
+    background-attachment: fixed; /* Mantiene il gradiente fisso */
     color: var(--text-main);
     margin: 0; padding: 0; 
-    padding-left: 80px; /* Spazio per sidebar */
-    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-left: 80px; 
+    transition: all 0.5s ease;
+    font-size: 14px;
 }
 
-h1, h2, h3, h4 { color: var(--text-main); }
-p, label, span { color: var(--text-sec); }
+/* Scanlines Effect (Opzionale: Solo in Dark Mode) */
+body.dark-mode::before {
+    content: " "; display: block; position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 9999; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.15;
+}
 
-.container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; }
+h1, h2, h3, h4 { 
+    color: var(--text-main); 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+/* Glow effect solo sui titoli principali in dark mode */
+body.dark-mode h1, body.dark-mode h2 {
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+p, label, span { color: var(--text-sec); }
+.container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; position: relative; z-index: 1; }
 
 /* ========================================= */
-/* 3. SIDEBAR (Uiverse Style)                */
+/* 3. SIDEBAR (Stile HUD)                    */
 /* ========================================= */
 .sidebar-nav {
     display: flex; flex-direction: column;
     background-color: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border); /* Bordo HUD */
     width: 60px; padding: 20px 0; align-items: center; justify-content: flex-start;
     border-radius: 15px; position: fixed; left: 20px; top: 50%;
     transform: translateY(-50%); z-index: 2000; gap: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.3s;
+    box-shadow: 0 0 15px var(--shadow);
+    backdrop-filter: blur(5px); /* Effetto vetro */
 }
 
 .sidebar-btn {
-    border: 0; background: transparent; width: 45px; height: 45px;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    color: #fff; cursor: pointer; text-decoration: none; transition: transform 0.2s;
+    border: 1px solid transparent; background: transparent; width: 45px; height: 45px;
+    border-radius: 8px; /* Meno rotondo, più tecnico */
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-main); cursor: pointer; text-decoration: none; transition: all 0.3s;
 }
-.sidebar-btn:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateX(5px); }
-.icon { font-size: 22px; }
+.sidebar-btn:hover { 
+    border-color: var(--primary);
+    background-color: var(--accent-glow); 
+    transform: translateX(3px); 
+    box-shadow: 0 0 10px var(--primary);
+}
+.icon { font-size: 20px; }
 
 /* ========================================= */
-/* 4. GRIGLIA & CARDS                        */
+/* 4. FILTRI & BUTTONS (Wireframe Style)     */
 /* ========================================= */
-.filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+.filters { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+
 .filter-btn { 
-    text-decoration: none; color: var(--text-main); background: var(--card-bg); 
-    padding: 8px 20px; border-radius: 20px; font-size: 14px; border: 1px solid var(--input-border);
+    text-decoration: none; 
+    color: var(--text-main); 
+    background: transparent; 
+    padding: 10px 25px; 
+    border-radius: 4px; /* Angoli tecnici */
+    font-size: 14px; 
+    border: 1px solid var(--primary);
+    font-weight: bold;
+    text-transform: uppercase;
     transition: 0.3s;
 }
-.filter-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
+.filter-btn:hover { 
+    background: var(--primary); 
+    color: var(--bg); /* Testo scuro su sfondo acceso */
+    box-shadow: 0 0 15px var(--accent-glow); 
+}
+
+/* ========================================= */
+/* 5. CARDS (Holographic Look)               */
+/* ========================================= */
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
 
 .card {
-    background: var(--card-bg); border-radius: 15px; overflow: hidden;
-    box-shadow: 0 4px 15px var(--shadow); transition: transform 0.3s, box-shadow 0.3s;
-    height: 340px; display: flex; flex-direction: column; cursor: pointer;
-    border: 1px solid var(--input-border);
+    background: var(--card-bg); 
+    border: 1px solid var(--card-border);
+    border-radius: 4px; /* Più squadrato */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0); /* Niente ombra base in dark mode */
+    transition: all 0.3s;
+    height: auto;
+    display: flex; 
+    flex-direction: column; 
+    cursor: pointer;
+    position: relative;
 }
-.card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--shadow); }
-.card model-viewer { width: 100%; height: 240px; background-color: var(--modal-bg); }
+
+.card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--primary);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.card model-viewer { 
+    width: 100%; height: 240px; 
+    background: transparent; /* Importante per vedere il gradiente dietro */
+}
+
+/* Angoli decorativi stile Tech */
+.card::after {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5); /* Vignettatura interna */
+    display: none;
+}
+body.dark-mode .card::after { display: block; }
+
 .card-info { 
     padding: 15px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; 
-    justify-content: center; border-top: 1px solid var(--input-border);
+    justify-content: center; 
+    border-top: 1px solid var(--card-border);
+    background: rgba(0,0,0,0.1);
 }
 
 /* ========================================= */
-/* 5. MODALE VIEW - LAYOUT BLINDATO (PRO)    */
+/* 6. MODALE VIEW (HUD Style)                */
 /* ========================================= */
 .modal-overlay {
     display: none; position: fixed; z-index: 9999; left: 0; top: 0;
-    width: 100%; height: 100%; background-color: rgba(0,0,0,0.85);
-    justify-content: center; align-items: center; backdrop-filter: blur(5px);
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.9); /* Più scuro */
+    justify-content: center; align-items: center; 
+    backdrop-filter: blur(8px);
 }
 
 .modal-view-content {
-    display: flex !important;       /* Forza Flexbox */
-    flex-direction: row !important; /* Forza allineamento orizzontale */
+    display: flex !important; flex-direction: row !important;
     width: 95%; max-width: 1400px; height: 85vh; 
-    background: var(--card-bg); border-radius: 20px; overflow: hidden; 
-    position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    background: var(--modal-bg); 
+    border: 1px solid var(--primary); /* Bordo Neon */
+    box-shadow: 0 0 30px var(--accent-glow);
+    border-radius: 8px; overflow: hidden; position: relative; 
 }
 
-/* COLONNA SINISTRA (VIEWER 3D) */
+/* VIEWER SECTION */
 .viewer-section {
-    flex: 1; /* Prende tutto lo spazio rimanente */
-    position: relative;
-    background: radial-gradient(circle at center, var(--modal-bg) 0%, var(--bg) 100%);
-    display: flex; flex-direction: column; overflow: hidden;
+    flex: 1; position: relative;
+    background: radial-gradient(circle at center, var(--card-bg) 0%, var(--bg) 100%);
+    display: flex; flex-direction: column;
 }
 
-/* --- 1. BOTTONE AR (Posizione: Alto Sinistra) --- */
 .ar-custom-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px; 
-    background-color: white;
-    border-radius: 30px;
-    border: none;
-    padding: 8px 16px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    z-index: 50; 
-    cursor: pointer;
-    transition: transform 0.2s;
+    position: absolute; top: 20px; left: 20px; 
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 4px; padding: 8px 16px; font-weight: bold;
+    font-family: inherit;
+    z-index: 50; cursor: pointer; transition: 0.3s;
 }
-.ar-custom-btn:hover { transform: scale(1.05); }
+.ar-custom-btn:hover { background: var(--primary); color: var(--bg); box-shadow: 0 0 15px var(--primary); }
 
-/* --- 2. TITOLO FLOTTANTE NEL VIEWER --- */
 .floating-title {
-    position: absolute; 
-    top: 70px; /* Default Desktop: Sotto il bottone AR */
-    left: 30px; 
-    z-index: 20; 
-    pointer-events: none; /* Permette di cliccare attraverso */
-    transition: all 0.3s ease;
+    position: absolute; top: 70px; left: 30px; z-index: 20; pointer-events: none;
 }
-.floating-title h2 { margin:0; font-size:1.8em; font-weight:800; text-shadow: 0 2px 10px rgba(255,255,255,0.8); color:#333; }
-.floating-title span { background:rgba(0,0,0,0.7); color:white; padding:4px 12px; border-radius:20px; font-size:0.85em; font-weight:bold; }
-
-/* --- 3. RESPONSIVE MOBILE (Risolve sovrapposizioni) --- */
-@media (max-width: 768px) {
-    /* Sposta il titolo in BASSO su mobile */
-    .floating-title {
-        top: auto;        
-        bottom: 100px;    /* Sopra lo slider */
-        left: 20px;
-        background: rgba(255,255,255,0.6); /* Sfondo semitrasparente per leggibilità */
-        padding: 10px;
-        border-radius: 15px;
-        backdrop-filter: blur(5px);
-        max-width: 80%;
-    }
-    .floating-title h2 { font-size: 1.3em; text-shadow: none; }
-    
-    /* Adatta la barra controlli */
-    .controls-floating-bar { bottom: 20px; width: 95%; padding: 10px; }
+.floating-title h2 { 
+    margin:0; font-size:1.8em; 
+    text-shadow: 0 0 10px var(--primary); 
+    color: var(--primary);
 }
 
-/* COLONNA DESTRA (CHAT) - LARGHEZZA FISSA */
+/* CHAT SECTION */
 .chat-container {
     width: 400px; min-width: 400px; 
-    border-left: 1px solid var(--input-border);
+    border-left: 1px solid var(--card-border);
     display: flex; flex-direction: column;
     background: var(--chat-bg); z-index: 10;
 }
 
 .chat-header {
-    padding: 20px; border-bottom: 1px solid var(--input-border);
-    font-weight: bold; font-size: 1.1em; color: var(--text-main);
+    padding: 20px; border-bottom: 1px solid var(--card-border);
+    font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;
     display: flex; justify-content: space-between; align-items: center;
 }
 
 .chat-messages {
     flex-grow: 1; overflow-y: auto; padding: 15px;
-    background: var(--bg); display: flex; flex-direction: column; gap: 15px;
-    scrollbar-width: thin; scrollbar-color: var(--text-sec) var(--bg);
+    background: var(--bg); /* Sfondo scuro chat */
+    display: flex; flex-direction: column; gap: 15px;
 }
-.chat-messages::-webkit-scrollbar { width: 6px; }
-.chat-messages::-webkit-scrollbar-thumb { background-color: var(--text-sec); border-radius: 10px; }
 
+/* Messaggi stile Terminale */
 .message {
-    padding: 10px 15px; border-radius: 10px; background: var(--card-bg);
-    box-shadow: 0 1px 3px var(--shadow); max-width: 90%;
+    padding: 10px 15px; 
+    border-radius: 4px; 
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 2px solid var(--primary); /* Accento laterale */
+    color: var(--text-sec);
 }
-.msg-user { font-weight: bold; font-size: 0.85em; color: var(--primary); margin-bottom: 4px; }
-.msg-text { color: var(--text-main); font-size: 0.95em; line-height: 1.4; }
-.msg-time { font-size: 0.7em; color: var(--text-sec); text-align: right; margin-top: 5px; }
+
+.msg-user { 
+    font-weight: bold; font-size: 0.85em; 
+    color: var(--primary); margin-bottom: 4px; font-family: 'Courier New', monospace;
+}
+.msg-text { color: var(--text-main); font-size: 0.95em; }
 
 .chat-input-area {
-    padding: 15px; border-top: 1px solid var(--input-border);
-    background: var(--card-bg); display: flex; gap: 10px;
+    padding: 15px; border-top: 1px solid var(--card-border);
+    background: var(--chat-bg); display: flex; gap: 10px;
 }
 .chat-input {
-    flex-grow: 1; padding: 10px 15px; border-radius: 20px;
-    border: 1px solid var(--input-border); background: var(--input-bg);
-    color: var(--text-main); outline: none;
+    flex-grow: 1; padding: 10px 15px; border-radius: 4px;
+    border: 1px solid var(--card-border); background: var(--input-bg);
+    color: var(--text-main); outline: none; font-family: inherit;
 }
+.chat-input:focus { border-color: var(--primary); box-shadow: 0 0 5px var(--accent-glow); }
+
 .chat-send-btn {
-    background: var(--primary); color: white; border: none;
-    width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--primary); 
+    border: 1px solid var(--primary);
+    width: 40px; height: 40px; border-radius: 4px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.3s;
+}
+.chat-send-btn:hover { background: var(--primary); color: var(--bg); }
+
+/* ========================================= */
+/* 7. UPLOAD & FORMS                         */
+/* ========================================= */
+.modal-upload-content {
+    width: 90%; max-width: 450px; 
+    background: var(--modal-bg); 
+    border: 1px solid var(--primary);
+    border-radius: 8px; position: relative; padding-bottom: 20px;
+    box-shadow: 0 0 25px var(--accent-glow);
 }
 
-/* --- BARRA CONTROLLI "PREMIUM" --- */
+.close-btn { 
+    position: absolute; top: 15px; right: 20px; color: var(--primary); 
+    font-size: 28px; cursor: pointer; z-index: 100; transition: 0.2s;
+}
+.close-btn:hover { text-shadow: 0 0 10px var(--primary); transform: scale(1.1); }
+
+.upload-anim-box {
+    background: rgba(0, 243, 255, 0.1); 
+    border: 1px dashed var(--primary); 
+    border-radius: 8px;
+}
+
+input[type="text"], select { 
+    background: var(--input-bg); border: 1px solid var(--card-border);
+    color: var(--text-main); border-radius: 4px; font-family: inherit;
+}
+
+.btn-submit {
+    background-color: transparent; color: var(--primary); 
+    border: 2px solid var(--primary);
+    padding: 15px; margin: 0 25px; cursor: pointer; 
+    border-radius: 4px; width: calc(100% - 50px); 
+    font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
+    transition: 0.3s;
+}
+.btn-submit:hover {
+    background-color: var(--primary); color: var(--bg);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* ========================================= */
+/* 8. CONTROLLI FLOTTANTI (Timeline)         */
+/* ========================================= */
 .controls-floating-bar {
     position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
     width: 90%; max-width: 600px;
-    background: rgba(255, 255, 255, 0.85); /* Glassmorphism Light */
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.6); 
+    border: 1px solid var(--primary);
+    backdrop-filter: blur(12px);
     padding: 10px 25px; border-radius: 50px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.4);
     display: flex; align-items: center; gap: 20px; z-index: 100;
 }
-/* Adattamento controlli per dark mode */
-body.dark-mode .controls-floating-bar {
-    background: rgba(30, 30, 30, 0.85); border: 1px solid rgba(255, 255, 255, 0.1);
-}
+body.light-mode .controls-floating-bar { background: rgba(255,255,255,0.8); border-color: var(--primary); }
 
 .btn-big-play {
-    width: 50px; height: 50px; border-radius: 50%; border: none;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-    color: white; font-size: 20px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4); transition: transform 0.2s ease; flex-shrink: 0;
+    width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary);
+    background: transparent; color: var(--primary); font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.3s;
 }
-.btn-big-play:hover { transform: scale(1.1); }
+.btn-big-play:hover { background: var(--primary); color: var(--bg); box-shadow: 0 0 15px var(--primary); }
 
-/* Slider Personalizzato */
-input[type=range].styled-slider { -webkit-appearance: none; width: 100%; background: transparent; appearance: none;}
-
-input[type=range].styled-slider:focus { outline: none; }
-input[type=range].styled-slider::-webkit-slider-runnable-track {
-    width: 100%; height: 6px; cursor: pointer; background: #ccc; border-radius: 10px;
-}
+/* Range Slider Customization */
 input[type=range].styled-slider::-webkit-slider-thumb {
-    height: 18px; width: 18px; border-radius: 50%; background: #fff;
-    border: 3px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    cursor: pointer; -webkit-appearance: none; margin-top: -6px; transition: transform 0.1s;
+    background: var(--bg); border: 2px solid var(--primary);
 }
-input[type=range].styled-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-/* ========================================= */
-/* 6. MODALE UPLOAD & ANIMAZIONI             */
-/* ========================================= */
-.modal-upload-content {
-    width: 90%; max-width: 450px; background: var(--card-bg); border-radius: 15px;
-    position: relative; overflow: hidden; padding-bottom: 20px;
-}
-.close-btn { position: absolute; top: 15px; right: 20px; color: var(--text-main); font-size: 28px; cursor: pointer; z-index: 100; }
-.form-group { margin-bottom: 20px; padding: 0 25px; }
-input[type="text"], select { 
-    width: 100%; padding: 12px; border: 2px solid var(--input-border); background: var(--input-bg);
-    color: var(--text-main); border-radius: 8px; box-sizing: border-box;
-}
-.btn-submit {
-    background-color: var(--primary); color: white; padding: 15px; margin: 0 25px;
-    border: none; cursor: pointer; border-radius: 8px; width: calc(100% - 50px); font-weight:bold;
+input[type=range].styled-slider::-webkit-slider-runnable-track {
+    background: var(--card-border);
 }
 
-/* Animazione Cartella */
-.upload-anim-box {
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 10px;
-    background: linear-gradient(135deg, #6dd5ed, #2193b0); border-radius: 15px;
-    height: 130px; position: relative; margin: 20px auto; width: 100%; max-width: 300px;
-}
-.folder { position: absolute; top: -20px; left: calc(50% - 60px); animation: float 2.5s infinite ease-in-out; }
-.folder .front-side { width: 120px; height: 80px; background: #ffc663; position: absolute; transform-origin: bottom center; z-index: 1; border-radius: 10px; }
-.folder .back-side { width: 120px; height: 80px; background: #ffe563; position: absolute; border-radius: 10px; }
-.folder .tip { width: 80px; height: 20px; background: #ff9a56; border-radius: 12px 12px 0 0; position: absolute; top: -10px; z-index: 2; }
-.custom-file-upload {
-    background: rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; color: white;
-    width: 100%; padding: 10px 0; text-align: center; display: inline-block;
-}
-.custom-file-upload input { display: none; }
-@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-
 /* ========================================= */
-/* 7. RESPONSIVE MOBILE                      */
+/* 9. RESPONSIVE                             */
 /* ========================================= */
 @media (max-width: 1000px) {
     body { padding-left: 0; padding-bottom: 80px; }
     .sidebar-nav {
-        flex-direction: row; width: 90%; height: 60px; left: 5%; top: auto; bottom: 20px;
-        transform: none; padding: 0; justify-content: space-around;
+        flex-direction: row; width: 90%; height: 60px; left: 5%; bottom: 20px; top: auto;
+        border-radius: 50px; transform: none; box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
-    /* Modale impilato */
-    .modal-view-content { flex-direction: column !important; height: 95vh; overflow-y: auto; }
-    .viewer-section { height: 50vh; min-height: 400px; flex: none; }
-    .chat-container { width: 100%; min-width: 0; height: auto; min-height: 400px; border-left: none; border-top: 1px solid #ccc; }
-    .controls-floating-bar { width: 90%; bottom: 15px; padding: 10px 15px; }
+    .modal-view-content { flex-direction: column !important; height: 95vh; border: none; }
+    .chat-container { width: 100%; border-left: none; border-top: 1px solid var(--primary); }
 }
