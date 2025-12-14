@@ -1,0 +1,23 @@
+services:
+  # Servizio Web
+  www:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+
+  # Servizio Database
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./DB_dumps:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql_data:  
