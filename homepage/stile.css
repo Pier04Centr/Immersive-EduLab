@@ -1,9 +1,8 @@
-
-/* --- STILE BASE & LAYOUT --- */
+/* --- STILE BASE --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background-color: #0a0e14;
+    background-color: #050505;
     color: #00f3ff;
     font-family: 'Courier New', Courier, monospace;
     height: 100vh;
@@ -11,7 +10,65 @@ body {
     font-size: 14px;
 }
 
-/* --- SCHERMATA DI BOOT --- */
+/* --- FASE 1: INTRO CON ASCII GLITCH --- */
+#intro-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #050505;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Stile specifico per il blocco ASCII */
+.glitch-ascii {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: #fff;
+    font-size: 12px; /* Dimensione base */
+    line-height: 12px;
+    white-space: pre; /* Mantiene gli a capo dell'ASCII */
+    
+    /* Animazione Glitch */
+    animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}
+
+/* Keyframes per l'effetto "Segnale disturbato / 3D" */
+@keyframes glitch-skew {
+    0% {
+        transform: translate(0);
+        text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9; /* Rosso e Ciano */
+    }
+    20% {
+        transform: translate(-2px, 2px);
+        text-shadow: -2px -2px #ff00c1, 2px 2px #00fff9;
+    }
+    40% {
+        transform: translate(-2px, -2px);
+        text-shadow: 0 0 transparent; /* Reset momentaneo */
+    }
+    60% {
+        transform: translate(2px, 2px);
+        text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9;
+    }
+    80% {
+        transform: translate(2px, -2px);
+        text-shadow: 2px 2px #ff00c1, -2px -2px #00fff9;
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: -2px 0 #ff00c1, 2px 0 #00fff9;
+    }
+}
+
+/* Adattamento dimensioni ASCII per schermi più grandi */
+@media (min-width: 768px) { 
+    .glitch-ascii { font-size: 16px; line-height: 16px; } 
+}
+
+
+/* --- FASE 2: TERMINALE --- */
 #boot-screen {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -19,10 +76,10 @@ body {
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    z-index: 9999;
+    z-index: 9000;
 }
 
-/* Effetto Scanlines CRT */
+/* Scanlines overlay (sempre presente su boot e sito) */
 #boot-screen::before {
     content: " ";
     display: block;
@@ -35,52 +92,35 @@ body {
     pointer-events: none;
 }
 
-/* --- LOGO ASCII --- */
-#ascii-logo {
-    font-size: 10px;
-    line-height: 10px;
-    white-space: pre;
-    color: #fff;
-    font-weight: bold;
-    text-shadow: 0 0 5px #00f3ff;
-    margin-bottom: 2rem;
-    opacity: 0;
-    transition: opacity 1s ease-in;
-}
-@media (min-width: 768px) { #ascii-logo { font-size: 14px; line-height: 14px; } }
-
-/* --- LOGS --- */
-#terminal-output {
-    flex-grow: 1;
-    overflow-y: hidden; /* Auto-scroll via JS */
-    padding-bottom: 20px;
+#terminal-output { 
+    flex-grow: 1; 
+    overflow-y: hidden; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* I log partono dall'alto */
 }
 
 .log-line { margin-bottom: 4px; opacity: 0.9; }
-.info { color: #00f3ff; }   /* Ciano: Info sistema */
-.warn { color: #ffcc00; }   /* Giallo: Network/Loading */
-.ok   { color: #00ff00; }   /* Verde: Successo */
-.err  { color: #ff0055; }   /* Rosso: Errori critici (non usato qui) */
-.core { color: #d65d0e; }   /* Arancio: Docker/Kernel */
+.timestamp { color: #555; margin-right: 10px; }
 
-/* Cursore lampeggiante */
+/* Colori Log */
+.info { color: #00f3ff; }
+.warn { color: #ffcc00; }
+.ok   { color: #00ff00; }
+.success { color: #00ff00; font-weight: bold; }
+.core { color: #d65d0e; }
+
+/* Cursore */
 .cursor::after {
-    content: '█';
-    animation: blink 1s infinite;
-    margin-left: 5px;
-    color: #00f3ff;
+    content: '█'; animation: blink 1s infinite; margin-left: 5px; color: #00f3ff;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* --- SITO VERO E PROPRIO (Nascosto) --- */
+
+/* --- FASE 3: SITO --- */
 #main-site {
-    display: none;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    display: none; height: 100%;
+    flex-direction: column; justify-content: center; align-items: center; text-align: center;
     animation: fadeIn 1.5s ease-out;
     background: radial-gradient(circle at center, #1a2a3a 0%, #050505 100%);
 }
@@ -90,14 +130,8 @@ h1 { font-size: 3rem; margin-bottom: 1rem; text-shadow: 0 0 10px #00f3ff; }
 p { max-width: 600px; line-height: 1.6; color: #ccc; }
 
 .btn-enter {
-    margin-top: 2rem;
-    padding: 10px 20px;
-    background: transparent;
-    border: 2px solid #00f3ff;
-    color: #00f3ff;
-    font-family: inherit;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
+    margin-top: 2rem; padding: 10px 20px;
+    background: transparent; border: 2px solid #00f3ff; color: #00f3ff;
+    font-family: inherit; font-weight: bold; cursor: pointer; transition: all 0.3s;
 }
 .btn-enter:hover { background: #00f3ff; color: #000; box-shadow: 0 0 15px #00f3ff; }

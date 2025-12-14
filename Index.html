@@ -8,8 +8,11 @@
 </head>
 <body>
 
-    <div id="boot-screen">
-        <div id="ascii-logo"></div>
+    <div id="intro-screen">
+        <pre id="ascii-intro" class="glitch-ascii"></pre>
+    </div>
+
+    <div id="boot-screen" style="display: none;">
         <div id="terminal-output"></div>
     </div>
 
@@ -17,9 +20,11 @@
         <h1>IMMERSIVE EDULAB</h1>
         <p>Piattaforma Web per la Didattica Immersiva & AR Markerless</p>
         <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
-            Powered by Docker & WebXR | Autori: Centrone P., Dagostino D.
+            Powered by Centrone P., Dagostino D.
         </p>
-        <button class="btn-enter" onclick="alert('Qui reindirizzi a login.php o index.php')">ACCEDI AL REPOSITORY</button>
+        <a href="./login/index.php" style="text-decoration: none;">
+            <button class="btn-enter">ACCEDI AL REPOSITORY</button>
+        </a>
     </div>
 
     <script src="homepage/script.js"></script>
