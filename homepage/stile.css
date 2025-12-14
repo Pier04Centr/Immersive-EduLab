@@ -188,7 +188,7 @@ h1 {
 
 /* CARD DESIGN */
 .hud-card {
-    background: rgba(0, 243, 255, 0.05); /* Sfondo ciano leggerissimo */
+    background: rgba(0, 243, 255, 0.05); 
     border: 1px solid rgba(0, 243, 255, 0.2);
     padding: 20px;
     text-align: left;
@@ -309,4 +309,183 @@ h1 {
         gap: 10px;
         align-items: center;
     }
+}
+
+/* --- VARIABILI COLORI (THEMING) --- */
+:root {
+    /* DEFAULT DARK MODE (Cyberpunk) */
+    --bg-color: #050505;
+    --bg-gradient: radial-gradient(circle at center, #111822 0%, #050505 100%);
+    --text-primary: #00f3ff;
+    --text-secondary: #cccccc;
+    --card-bg: rgba(0, 243, 255, 0.05);
+    --card-border: rgba(0, 243, 255, 0.2);
+    --accent-color: #00f3ff;
+    --accent-glow: rgba(0, 243, 255, 0.6);
+    --scanline-opacity: 0.15;
+}
+
+/* LIGHT MODE OVERRIDES (Clean Lab) */
+body.light-mode {
+    --bg-color: #f0f4f8;
+    --bg-gradient: radial-gradient(circle at center, #ffffff 0%, #e1e9f0 100%);
+    --text-primary: #004488; /* Blu tecnico scuro */
+    --text-secondary: #445566; /* Grigio scuro */
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-border: #ccddee;
+    --accent-color: #0066cc; /* Blu più solido */
+    --accent-glow: rgba(0, 102, 204, 0.3);
+    --scanline-opacity: 0.03; /* Quasi invisibili */
+}
+
+/* --- STILE BASE --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Courier New', Courier, monospace;
+    height: 100vh;
+    overflow: hidden; /* Gestito poi dal JS per lo scroll */
+    font-size: 14px;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* --- LE FASI 1 & 2 (INTRO) RIMANGONO SCURE --- */
+/* L'intro è "BIOS/Boot", quindi ha senso che rimanga nera anche se il sito sarà chiaro */
+#intro-screen, #boot-screen {
+    background-color: #050505; 
+    color: #00f3ff;
+}
+/* ... (Copia qui tutto il CSS precedente per .glitch-ascii, .log-line, ecc. invariato) ... */
+/* Riporto solo le parti modificate per il layout del sito */
+
+/* --- FASE 3: SITO --- */
+#main-site {
+    display: none; 
+    height: 100%; width: 100%;
+    flex-direction: column; 
+    align-items: center;
+    background: var(--bg-gradient);
+    padding: 2rem;
+    overflow-y: auto; /* Scroll abilitato */
+    animation: fadeIn 1.5s ease-out;
+}
+
+/* HEADER AGGIORNATO */
+.hud-header {
+    width: 100%; max-width: 1000px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 1rem; margin-top: 1rem;
+}
+
+.header-content {
+    display: flex; justify-content: space-between; align-items: flex-end;
+}
+
+h1 { 
+    font-size: 2.5rem; margin-bottom: 0.5rem; 
+    text-shadow: 0 0 10px var(--accent-glow); 
+    color: var(--text-primary);
+}
+
+.subtitle {
+    color: #ffcc00; /* Giallo (rimane uguale per contrasto) */
+    font-size: 0.9rem; letter-spacing: 2px; font-weight: bold;
+}
+
+/* TASTO THEME TOGGLE */
+.btn-icon {
+    background: transparent; border: 1px solid var(--accent-color);
+    color: var(--accent-color); padding: 8px 12px;
+    cursor: pointer; transition: all 0.3s;
+    font-size: 1.2rem; border-radius: 4px;
+}
+.btn-icon:hover {
+    background: var(--accent-color); color: var(--bg-color);
+}
+
+/* GRID SYSTEM */
+.hud-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; width: 100%; max-width: 1200px; margin: 2rem 0;
+}
+
+.hud-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 20px; text-align: left;
+    transition: all 0.3s ease;
+    /* Ombra leggera in light mode per dare profondità */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+}
+
+.hud-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 15px var(--accent-glow);
+}
+
+.card-icon { font-size: 2rem; color: var(--accent-color); margin-bottom: 1rem; }
+.hud-card h3 { 
+    color: var(--text-primary); margin-bottom: 0.8rem; 
+    border-left: 3px solid var(--accent-color); padding-left: 10px; 
+}
+.hud-card p { color: var(--text-secondary); line-height: 1.5; }
+
+/* NUOVE SEZIONI (Chi siamo / Features) */
+.info-section, .about-section {
+    width: 100%; max-width: 1000px; margin-bottom: 3rem; text-align: center;
+}
+
+.section-title {
+    font-size: 1.5rem; color: var(--text-primary);
+    margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px;
+    border-bottom: 1px solid var(--card-border); display: inline-block; padding-bottom: 5px;
+}
+
+.features-list {
+    display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;
+}
+
+.feature-item {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    color: var(--text-secondary); width: 150px;
+}
+.feature-item i { font-size: 2rem; color: var(--accent-color); }
+
+.about-section p {
+    color: var(--text-secondary); line-height: 1.6; max-width: 800px; margin: 0 auto;
+}
+
+/* CTA */
+.cta-container { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 3rem; }
+.btn-enter {
+    padding: 15px 40px; background: transparent;
+    border: 2px solid var(--accent-color); color: var(--accent-color);
+    font-weight: bold; font-size: 1.2rem; text-decoration: none; 
+    transition: all 0.3s;
+}
+.btn-enter:hover {
+    background: var(--accent-color); color: var(--bg-color); /* Inversione corretta anche in light mode */
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.system-status { color: var(--text-secondary); display: flex; align-items: center; gap: 8px; font-size: 0.8rem;}
+.status-light { width: 8px; height: 8px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 5px #00ff00; }
+
+/* FOOTER */
+.hud-footer {
+    width: 100%; max-width: 1000px; border-top: 1px solid var(--card-border);
+    padding-top: 1rem; padding-bottom: 2rem;
+    display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary);
+}
+.author-name { color: var(--text-primary); font-weight: bold; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .hud-grid { grid-template-columns: 1fr; }
+    .header-content { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+    .features-list { grid-template-columns: 1fr 1fr; display: grid; }
+    .hud-footer { flex-direction: column; align-items: center; gap: 10px; }
 }

@@ -100,3 +100,26 @@ async function startSystem() {
 }
 
 window.onload = startSystem;
+
+// ... (Tutto il codice precedente delle animazioni bootSequence, asciiArt, etc. resta UGUALE) ...
+
+// ... (Dopo la funzione startSystem e window.onload, aggiungi questo blocco per gestire il tema) ...
+
+// GESTIONE TEMA (Light/Dark)
+const themeBtn = document.getElementById('theme-toggle');
+const body = document.body;
+
+// Se l'utente clicca il bottone
+themeBtn.addEventListener('click', () => {
+    body.classList.toggle('light-mode');
+    
+    // Cambia icona
+    const icon = themeBtn.querySelector('i');
+    if (body.classList.contains('light-mode')) {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon'); // Diventa luna in modalità chiara
+    } else {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun'); // Diventa sole in modalità scura
+    }
+});
