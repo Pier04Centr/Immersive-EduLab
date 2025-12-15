@@ -6,7 +6,7 @@ const outputDiv = document.getElementById('terminal-output');
 const asciiIntroDiv = document.getElementById('ascii-intro');
 
 const typeSpeed = 15; 
-const glitchDuration = 2500; //2.5 secondi
+const glitchDuration = 1500; //2.5 secondi
 
 // ASCII ART PER LA FASE 1
 const asciiArt = `
