@@ -12,41 +12,29 @@ if (isset($_POST['register'])) {
     $email = mysqli_real_escape_string($conn, strtolower($_POST['email']));
     $password = $_POST['password'];
     $cpassword = $_POST['cpassword'];
-
-    if (strlen($password) < 12) {
-        $alertMessage = "SYSTEM ERROR: Password insufficient length (<12 chars)";
-    } 
-    elseif (!preg_match('/[A-Z]/', $password) || !preg_match('/[0-9]/', $password)) {
-        $alertMessage = "SYSTEM ERROR: Password complexity unsatisfied (Need 1 Upper, 1 Digit)";
-    }
-    elseif ($password !== $cpassword) {
-        $alertMessage = "SYSTEM ERROR: Password mismatch";
-    } 
-    else {
-        $checkUser = mysqli_query($conn, "SELECT * FROM utenti WHERE Username = '$username'");
-        if (mysqli_num_rows($checkUser) > 0) {
-            $alertMessage = "ACCESS DENIED: Username already registered";
+    $checkUser = mysqli_query($conn, "SELECT * FROM utenti WHERE Username = '$username'");
+    if (mysqli_num_rows($checkUser) > 0) {
+        $alertMessage = "ACCESS DENIED: Username taken";
+    } else {
+        $checkEmail = mysqli_query($conn, "SELECT * FROM utenti WHERE Email = '$email'");
+        if (mysqli_num_rows($checkEmail) > 0) {
+            $alertMessage = "ACCESS DENIED: Email registered";
         } else {
-            $checkEmail = mysqli_query($conn, "SELECT * FROM utenti WHERE Email = '$email'");
-            if (mysqli_num_rows($checkEmail) > 0) {
-                $alertMessage = "ACCESS DENIED: Email already registered";
+            $_SESSION['username'] = $username;
+            $_SESSION['nome'] = $nome;
+            $_SESSION['cognome'] = $cognome;
+
+            $sql = "INSERT INTO utenti (Username, Nome, Cognome, Email, Password) VALUES ('$username', '$nome', '$cognome', '$email', SHA2('$password', 512))";
+            $result = mysqli_query($conn, $sql);
+
+            if ($result) {
+                echo "<script>
+                    alert('ACCESS GRANTED: Profile Created.');
+                    window.location.href = '../Image-Gallary/index.php';
+                </script>";
+                exit();
             } else {
-                $_SESSION['username'] = $username;
-                $_SESSION['nome'] = $nome;
-                $_SESSION['cognome'] = $cognome;
-
-                $sql = "INSERT INTO utenti (Username, Nome, Cognome, Email, Password) VALUES ('$username', '$nome', '$cognome', '$email', SHA2('$password', 512))";
-                $result = mysqli_query($conn, $sql);
-
-                if ($result) {
-                    echo "<script>
-                        alert('ACCESS GRANTED: User registered successfully.');
-                        window.location.href = '../Image-Gallary/index.php';
-                    </script>";
-                    exit();
-                } else {
-                    $alertMessage = "DATABASE ERROR: " . mysqli_error($conn);
-                }
+                $alertMessage = "DB ERROR: " . mysqli_error($conn);
             }
         }
     }
@@ -83,15 +71,19 @@ if (isset($_POST['login'])) {
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>EduLab Access Terminal</title>
+    <title>EduLab Access</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="stile.css?v=2">
+    <link rel="stylesheet" type="text/css" href="stile.css?v=4">
 </head>
 
 <body>
-    <a href="../index.html" style="position: absolute; top: 20px; left: 20px; color: #00f3ff; text-decoration: none; font-weight: bold; border: 1px solid #00f3ff; padding: 5px 10px; z-index: 9999;">
+    <a href="../index.html" style="position: absolute; top: 20px; left: 20px; color: var(--primary); text-decoration: none; font-weight: bold; border: 1px solid var(--primary); padding: 5px 10px; z-index: 9999; border-radius:4px;">
         <i class="fa-solid fa-arrow-left"></i> HOME
     </a>
+
+    <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Light/Dark Mode">
+        <i class="fa-solid fa-sun"></i>
+    </button>
 
     <?php if ($alertMessage != ""): ?>
         <script>alert("<?php echo $alertMessage; ?>");</script>
@@ -100,12 +92,12 @@ if (isset($_POST['login'])) {
     <div class="container">
         <div class="blueBg">
             <div class="box signin">
-                <h2>Already Registered?</h2>
+                <h2>Have an account?</h2>
                 <button class="signinBtn">Sign In <i class="fa-solid fa-key"></i></button>
             </div>
             <div class="box signup">
-                <h2>New User?</h2>
-                <button class="signupBtn">Initialize <i class="fa-solid fa-user-plus"></i></button>
+                <h2>New here?</h2>
+                <button class="signupBtn">Sign Up <i class="fa-solid fa-user-plus"></i></button>
             </div>
         </div>
         
@@ -113,11 +105,11 @@ if (isset($_POST['login'])) {
             
             <div class="form signinForm">
                 <form method="POST">
-                    <h3>System Access</h3>
+                    <h3>Access</h3>
                     <input type="email" placeholder="USER EMAIL" name="email" required>
                     <input type="password" placeholder="PASSWORD" name="password" required>
                     <input type="submit" value="LOGIN" name="login">
-                    <a href="#" class="forgot">Reset Credentials?</a>
+                    <a href="#" class="forgot">Forgot credentials?</a>
                 </form>
             </div>
 
@@ -140,42 +132,6 @@ if (isset($_POST['login'])) {
         </div>
     </div>
     
-    <script src="script.js"></script>
-
-    <script>
-        // Validazione Client-Side (Cyberpunk Style)
-        const passwordInput = document.getElementById('regPassword');
-        const confirmInput = document.getElementById('regConfirmPassword');
-        const hint = document.getElementById('pwd-hint');
-
-        const strongPasswordRegex = /^(?=.*[A-Z])(?=.*[0-9]).{12,}$/;
-
-        passwordInput.addEventListener('input', function() {
-            const val = passwordInput.value;
-            hint.style.display = 'block';
-
-            if (strongPasswordRegex.test(val)) {
-                passwordInput.classList.remove('invalid');
-                passwordInput.classList.add('valid');
-                hint.style.color = '#00ff00';
-                hint.innerText = "SECURITY LEVEL: HIGH ✅";
-            } else {
-                passwordInput.classList.remove('valid');
-                passwordInput.classList.add('invalid');
-                hint.style.color = '#ff0055';
-                hint.innerText = "SECURITY LEVEL: LOW (Req: 12 chars, 1 Upper, 1 Digit)";
-            }
-        });
-
-        confirmInput.addEventListener('input', function() {
-            if (confirmInput.value === passwordInput.value && confirmInput.value !== "") {
-                confirmInput.classList.add('valid');
-                confirmInput.classList.remove('invalid');
-            } else {
-                confirmInput.classList.add('invalid');
-                confirmInput.classList.remove('valid');
-            }
-        });
-    </script>
+    <script src="./script.js"></script>
 </body>
 </html>
