@@ -1,0 +1,210 @@
+/* ========================================= */
+/* 1. VARIABILI & TEMI                       */
+/* ========================================= */
+:root {
+    /* --- DARK MODE (Default: Cyberpunk) --- */
+    --bg-color: #050505;
+    --bg-gradient: radial-gradient(circle at center, #111822 0%, #050505 100%);
+    --primary: #00f3ff;          /* Ciano */
+    --secondary: #ffcc00;        /* Giallo */
+    --text-main: #ffffff;
+    --text-sec: #cccccc;
+    --card-bg: rgba(10, 14, 20, 0.95);
+    --card-border: rgba(0, 243, 255, 0.3);
+    --input-bg: rgba(0, 0, 0, 0.5);
+    --shadow-color: rgba(0, 243, 255, 0.15);
+    --scanline-opacity: 0.2;
+}
+
+body.light-mode {
+    /* --- LIGHT MODE (Clean Lab) --- */
+    --bg-color: #f0f4f8;
+    --bg-gradient: radial-gradient(circle at center, #ffffff 0%, #dbe4ea 100%);
+    --primary: #0066cc;          /* Blu Tecnico */
+    --secondary: #d35400;        /* Arancione Tecnico (per Signup) */
+    --text-main: #004488;        /* Testo Blu Scuro */
+    --text-sec: #556677;
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-border: #ccddee;
+    --input-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --scanline-opacity: 0.03;    /* Quasi invisibile */
+}
+
+/* ========================================= */
+/* 2. SETUP GENERALE                         */
+/* ========================================= */
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh;
+    background: var(--bg-color);
+    background-image: var(--bg-gradient);
+    color: var(--text-main);
+    transition: all 0.5s ease;
+    overflow: hidden;
+}
+
+/* Effetto Scanlines (più leggero in Light Mode) */
+body::before {
+    content: " "; display: block; position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 1; background-size: 100% 2px, 3px 100%; pointer-events: none; 
+    opacity: var(--scanline-opacity);
+    transition: opacity 0.5s;
+}
+
+.container {
+    position: relative; width: 800px; height: 500px; margin: 20px;
+    z-index: 10;
+}
+
+/* ========================================= */
+/* 3. SFONDO STATICO                         */
+/* ========================================= */
+.blueBg {
+    position: absolute; top: 40px; width: 100%; height: 420px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 20px var(--shadow-color);
+    transition: 0.5s;
+}
+/* In light mode rendiamo lo sfondo statico un po' più visibile */
+body.light-mode .blueBg { background: rgba(255, 255, 255, 0.5); }
+
+.blueBg .box {
+    position: relative; width: 50%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    flex-direction: column; text-align: center;
+}
+
+.blueBg .box h2 {
+    color: var(--text-main); font-size: 1.2em; 
+    font-weight: bold; margin-bottom: 15px;
+    text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* Bottoni Switch */
+button {
+    padding: 10px 25px;
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    font-size: 14px; font-weight: bold; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 2px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: var(--primary); 
+    color: var(--bg-color); /* Testo scuro/chiaro in base al tema */
+    box-shadow: 0 0 15px var(--primary);
+}
+
+/* Lato Sign Up */
+.blueBg .box.signup button { color: var(--secondary); border-color: var(--secondary); }
+.blueBg .box.signup button:hover {
+    background: var(--secondary); color: var(--bg-color); 
+    box-shadow: 0 0 15px var(--secondary);
+}
+
+/* ========================================= */
+/* 4. BOX SCORREVOLE (FormBx)                */
+/* ========================================= */
+.formBx {
+    position: absolute; top: 0; left: 0; width: 50%; height: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--primary);
+    z-index: 900;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.2);
+    transition: 0.5s ease-in-out;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.formBx.active { left: 50%; border-color: var(--secondary); }
+
+.formBx .form { position: absolute; left: 0; width: 100%; padding: 50px; transition: 0.5s; }
+.formBx .signinForm { transition-delay: 0.25s; }
+.formBx.active .signinForm { left: -100%; transition-delay: 0s; }
+.formBx .signupForm { left: 100%; transition-delay: 0s; }
+.formBx.active .signupForm { left: 0; transition-delay: 0.25s; }
+
+.formBx .form form { width: 100%; display: flex; flex-direction: column; }
+
+.formBx .form form h3 {
+    font-size: 2em; color: var(--primary);
+    margin-bottom: 25px; font-weight: bold;
+    text-transform: uppercase;
+}
+.formBx.active .form form h3 { color: var(--secondary); }
+
+/* Input Fields */
+.formBx .form form input {
+    width: 100%; margin-bottom: 20px; padding: 12px;
+    outline: none; font-size: 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main); /* Importante per light mode */
+    transition: 0.3s;
+}
+
+.formBx .form form input::placeholder { color: var(--text-sec); }
+
+.formBx .form form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary);
+}
+
+/* Submit Buttons */
+.formBx .form form input[type="submit"] {
+    background: transparent; border: 2px solid var(--primary);
+    color: var(--primary); font-weight: bold; cursor: pointer;
+    max-width: 120px; text-transform: uppercase;
+}
+.formBx .form form input[type="submit"]:hover {
+    background: var(--primary); color: var(--bg-color);
+}
+
+.formBx.active .signupForm input[type="submit"] {
+    border-color: var(--secondary); color: var(--secondary);
+}
+.formBx.active .signupForm input[type="submit"]:hover {
+    background: var(--secondary); color: var(--bg-color);
+}
+
+.formBx .form form .forgot { color: var(--text-sec); text-decoration: none; font-size: 0.8em; margin-top: 10px; }
+.formBx .form form .forgot:hover { color: var(--primary); }
+
+/* Validazione Input */
+input.valid { border-color: #00aa00 !important; }
+input.invalid { border-color: #e74c3c !important; }
+
+#pwd-hint { font-size: 0.7em; margin-top: -10px; margin-bottom: 15px; color: var(--text-sec); display: none; }
+
+/* TASTO THEME TOGGLE (Specifico) */
+.theme-toggle-btn {
+    position: absolute; top: 20px; right: 20px;
+    background: transparent; border: 1px solid var(--primary);
+    color: var(--primary); padding: 8px 12px; cursor: pointer;
+    border-radius: 4px; z-index: 9999; font-size: 1.2rem;
+    transition: 0.3s;
+}
+.theme-toggle-btn:hover { background: var(--primary); color: var(--bg-color); }
+
+@media only screen and (max-width: 991px) {
+    .container { max-width: 400px; height: 650px; }
+    .container .blueBg { top: 0; height: 100%; }
+    .formBx { width: 100%; height: 500px; top: 0; border: none; }
+    .blueBg .box { position: absolute; width: 100%; height: 150px; bottom: 0; }
+    .box.signin { top: 0; }
+    .formBx.active { left: 0; top: 150px; }
+}

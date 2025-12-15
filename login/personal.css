@@ -1,0 +1,75 @@
+/* ========================================= */
+/* STILE AREA PERSONALE (Dark Mode Ready)    */
+/* ========================================= */
+
+/* Forziamo lo sfondo a usare la variabile del tema (Light o Dark) */
+body { 
+    background-color: var(--bg) !important;
+    color: var(--text-main) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Card Profilo --- */
+.card-profile { 
+    margin-top: 50px; 
+    border-radius: 20px;
+    background-color: var(--card-bg); /* Sfondo che cambia col tema */
+    color: var(--text-main);
+    box-shadow: 0 10px 30px var(--shadow);
+    border: 1px solid var(--input-border);
+    overflow: hidden;
+}
+
+/* Avatar circolare */
+.avatar-placeholder { 
+    width: 100px; height: 100px; 
+    /* Gradiente blu coerente con il sito */
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
+    color: white; 
+    border-radius: 50%; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 2.8rem; 
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border: 4px solid var(--card-bg); /* Bordo per stacco visivo */
+}
+
+/* Testi e Badge */
+h4 { color: var(--text-main) !important; font-weight: 800; }
+.text-muted { color: var(--text-sec) !important; }
+
+/* Badge descrittivo */
+.badge-role {
+    background-color: var(--primary);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+/* --- Lista Dettagli --- */
+.list-group-item {
+    background-color: var(--bg); /* Leggermente diverso dalla card per contrasto */
+    color: var(--text-main);
+    border: 1px solid var(--input-border);
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 10px !important; /* Arrotonda ogni elemento */
+}
+
+/* Icone */
+.list-group-item i { 
+    color: var(--primary); 
+    width: 25px; 
+    text-align: center; 
+}
+
+.fw-bold { color: var(--text-main); font-weight: 700; }
+
+/* --- Mobile Responsive --- */
+@media (max-width: 900px) {
+    .card-profile { margin-top: 20px; }
+}
