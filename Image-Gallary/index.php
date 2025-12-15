@@ -57,7 +57,7 @@
         <a href="#" onclick="openUploadModal(); return false;" class="sidebar-btn" title="Upload"><i class="fas fa-cloud-upload-alt icon"></i></a>
         <a href="../login/personal.php" class="sidebar-btn" title="Profilo"><i class="fas fa-user icon"></i></a>
         
-        <button onclick="toggleDarkMode()" class="sidebar-btn" title="Cambia Tema" style="margin-top:auto; margin-bottom:10px;">
+        <button onclick="toggleDarkMode()" class="sidebar-btn" title="Cambia Tema">
             <i id="theme-icon" class="fas fa-moon icon"></i>
         </button>
     </div>

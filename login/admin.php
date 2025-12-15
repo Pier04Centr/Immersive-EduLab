@@ -51,8 +51,11 @@ if (isset($_GET['delete_project'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Console</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="./stile.css?v=<?php echo time(); ?>"> 
-    <link rel="stylesheet" href="./admin.css">
+    <link rel="stylesheet" href="https://mdbootstrap.com/api/snippets/static/download/MDB5-Free_6.1.0/css/mdb.min.css">
+    
+    <link rel="stylesheet" href="../Image-Gallary/style.css">
+    <link rel="stylesheet" href="personal.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
@@ -61,15 +64,13 @@ if (isset($_GET['delete_project'])) {
         <a href="../Image-Gallary/index.php" class="sidebar-btn" title="Upload"><i class="fas fa-vr-cardboard"></i></a>
         <a href="#" class="sidebar-btn" title="Profilo"><i class="fas fa-user icon"></i></a>
 
-        <button onclick="toggleDarkMode()" class="sidebar-btn" title="Cambia Tema" id="theme-toggle" style="margin-bottom:10px;">
-            <i id="theme-icon" class="fas fa-moon icon"></i>
+        <button class="sidebar-btn" title="Cambia Tema" id="theme-toggle">
+            <i class="fas fa-moon icon"></i>
         </button>
     </div>
 
     <div class="admin-container">
-        <h1 style="color: var(--primary); text-align: center; margin-bottom: 50px; text-shadow: 0 0 20px var(--primary); font-size: 2.5rem;">
-            SYSTEM ADMIN CONSOLE
-        </h1>
+        <h1 style="text-align:center; margin-bottom: 10px;">System Admin Console</h1>
 
         <div class="panel-section">
             <h2><i class="fa-solid fa-users-gear"></i> Gestione Utenti</h2>

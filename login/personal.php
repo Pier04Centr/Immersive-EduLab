@@ -64,7 +64,7 @@ if ($currentUser['Admin'] == 1) {
             <i class="fas fa-user icon"></i>
         </a>
 
-        <button onclick="toggleDarkMode()" class="sidebar-btn" title="Cambia Tema" style="margin-bottom:10px;">
+        <button onclick="toggleDarkMode()" class="sidebar-btn" title="Cambia Tema">
             <i id="theme-icon" class="fas fa-moon icon"></i>
         </button>
     </div>
