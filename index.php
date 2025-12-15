@@ -127,7 +127,7 @@
                 </div>
                 <div class="form-group">
                     <label>File 3D</label>
-                    <div class="upload-anim-box">
+                    <div class="upload-widget">
                       <div class="folder"><div class="front-side"><div class="tip"></div></div><div class="back-side"></div></div>
                       <label class="custom-file-upload">
                         <input type="file" name="image" accept=".glb,.gltf" required onchange="updateFileName(this)" />
