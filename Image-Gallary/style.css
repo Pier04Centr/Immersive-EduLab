@@ -1,0 +1,512 @@
+/* ========================================= */
+/* 1. VARIABILI & TEMI (ALLINEATI ALLA HOME) */
+/* ========================================= */
+:root {
+    /* --- LIGHT MODE (Clean Lab Style) --- */
+    --primary: #0066cc;          /* Blu tecnico solido */
+    --primary-hover: #004488;    /* Blu più scuro */
+    --accent-glow: rgba(0, 102, 204, 0.3);
+    
+    --bg: #f0f4f8;
+    --bg-gradient: radial-gradient(circle at center, #ffffff 0%, #e1e9f0 100%);
+    
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-border: #ccddee;
+    
+    --text-main: #004488;        /* Testo primario blu tecnico */
+    --text-sec: #445566;         /* Grigio scuro */
+    
+    --modal-bg: #ffffff;
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #ccddee;
+    
+    --input-bg: #ffffff;
+    --input-border: #ccddee;
+    --chat-bg: #f9fbfd;
+    --shadow: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode {
+    /* --- DARK MODE (Cyberpunk/EduLab Style) --- */
+    --primary: #00f3ff;          /* Ciano Neon */
+    --primary-hover: #00c2cc;
+    --accent-glow: rgba(0, 243, 255, 0.4);
+    
+    --bg: #050505;
+    --bg-gradient: radial-gradient(circle at center, #111822 0%, #050505 100%);
+    
+    --card-bg: rgba(0, 243, 255, 0.05); /* Sfondo semitrasparente ciano */
+    --card-border: rgba(0, 243, 255, 0.2);
+    
+    --text-main: #00f3ff;        /* Testo ciano */
+    --text-sec: #cccccc;         /* Grigio chiaro */
+    
+    --modal-bg: #0a0e14;
+    --sidebar-bg: rgba(10, 14, 20, 0.9);
+    --sidebar-border: rgba(0, 243, 255, 0.3);
+    
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --input-border: rgba(0, 243, 255, 0.3);
+    --chat-bg: #0a0e14;
+    --shadow: rgba(0, 243, 255, 0.1);
+}
+
+/* ========================================= */
+/* 2. SETUP GENERALE & TIPOGRAFIA            */
+/* ========================================= */
+body {
+    font-family: 'Courier New', Courier, monospace; /* FONT DEL TERMINALE */
+    background: var(--bg); /* Fallback */
+    background-image: var(--bg-gradient);
+    background-attachment: fixed; /* Mantiene il gradiente fisso */
+    color: var(--text-main);
+    margin: 0; padding: 0; 
+    padding-left: 80px; 
+    transition: all 0.5s ease;
+    font-size: 14px;
+}
+
+/* Scanlines Effect (Opzionale: Solo in Dark Mode) */
+body.dark-mode::before {
+    content: " "; display: block; position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 9999; background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.15;
+}
+
+h1, h2, h3, h4 { 
+    color: var(--text-main); 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+/* Glow effect solo sui titoli principali in dark mode */
+body.dark-mode h1, body.dark-mode h2 {
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+p, label, span { color: var(--text-sec); }
+.container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; position: relative; z-index: 1; }
+
+/* ========================================= */
+/* 3. SIDEBAR (Stile HUD)                    */
+/* ========================================= */
+.sidebar-nav {
+    display: flex; flex-direction: column;
+    background-color: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border); /* Bordo HUD */
+    width: 60px; padding: 20px 0; align-items: center; justify-content: flex-start;
+    border-radius: 15px; position: fixed; left: 20px; top: 50%;
+    transform: translateY(-50%); z-index: 2000; gap: 20px;
+    box-shadow: 0 0 15px var(--shadow);
+    backdrop-filter: blur(5px); /* Effetto vetro */
+}
+
+.sidebar-btn {
+    border: 1px solid transparent; background: transparent; width: 45px; height: 45px;
+    border-radius: 8px; /* Meno rotondo, più tecnico */
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-main); cursor: pointer; text-decoration: none; transition: all 0.3s;
+}
+.sidebar-btn:hover { 
+    border-color: var(--primary);
+    background-color: var(--accent-glow); 
+    transform: translateX(3px); 
+    box-shadow: 0 0 10px var(--primary);
+}
+.icon { font-size: 20px; }
+
+/* ========================================= */
+/* 4. FILTRI & BUTTONS (Wireframe Style)     */
+/* ========================================= */
+.filters { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+
+.filter-btn { 
+    text-decoration: none; 
+    color: var(--text-main); 
+    background: transparent; 
+    padding: 10px 25px; 
+    border-radius: 4px; /* Angoli tecnici */
+    font-size: 14px; 
+    border: 1px solid var(--primary);
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.filter-btn:hover { 
+    background: var(--primary); 
+    color: var(--bg); /* Testo scuro su sfondo acceso */
+    box-shadow: 0 0 15px var(--accent-glow); 
+}
+
+/* ========================================= */
+/* 5. CARDS (Holographic Look)               */
+/* ========================================= */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+
+.card {
+    background: var(--card-bg); 
+    border: 1px solid var(--card-border);
+    border-radius: 4px; /* Più squadrato */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0); /* Niente ombra base in dark mode */
+    transition: all 0.3s;
+    height: auto;
+    display: flex; 
+    flex-direction: column; 
+    cursor: pointer;
+    position: relative;
+}
+
+.card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--primary);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.card model-viewer { 
+    width: 100%; height: 240px; 
+    background: transparent; /* Importante per vedere il gradiente dietro */
+}
+
+/* Angoli decorativi stile Tech */
+.card::after {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5); /* Vignettatura interna */
+    display: none;
+}
+body.dark-mode .card::after { display: block; }
+
+.card-info { 
+    padding: 15px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; 
+    justify-content: center; 
+    border-top: 1px solid var(--card-border);
+    background: rgba(0,0,0,0.1);
+}
+
+/* ========================================= */
+/* 6. MODALE VIEW (HUD Style)                */
+/* ========================================= */
+.modal-overlay {
+    display: none; position: fixed; z-index: 9999; left: 0; top: 0;
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.9); /* Più scuro */
+    justify-content: center; align-items: center; 
+    backdrop-filter: blur(8px);
+}
+
+.modal-view-content {
+    display: flex !important; flex-direction: row !important;
+    width: 95%; max-width: 1400px; height: 85vh; 
+    background: var(--modal-bg); 
+    border: 1px solid var(--primary); /* Bordo Neon */
+    box-shadow: 0 0 30px var(--accent-glow);
+    border-radius: 8px; overflow: hidden; position: relative; 
+}
+
+/* VIEWER SECTION */
+.viewer-section {
+    flex: 1; position: relative;
+    background: radial-gradient(circle at center, var(--card-bg) 0%, var(--bg) 100%);
+    display: flex; flex-direction: column;
+}
+
+.ar-custom-btn {
+    position: absolute; top: 20px; left: 20px; 
+    background-color: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 4px; padding: 8px 16px; font-weight: bold;
+    font-family: inherit;
+    z-index: 50; cursor: pointer; transition: 0.3s;
+}
+.ar-custom-btn:hover { background: var(--primary); color: var(--bg); box-shadow: 0 0 15px var(--primary); }
+
+.floating-title {
+    position: absolute; top: 70px; left: 30px; z-index: 20; pointer-events: none;
+}
+.floating-title h2 { 
+    margin:0; font-size:1.8em; 
+    text-shadow: 0 0 10px var(--primary); 
+    color: var(--primary);
+}
+
+/* CHAT SECTION */
+.chat-container {
+    width: 400px; min-width: 400px; 
+    border-left: 1px solid var(--card-border);
+    display: flex; flex-direction: column;
+    background: var(--chat-bg); z-index: 10;
+}
+
+.chat-header {
+    padding: 20px; border-bottom: 1px solid var(--card-border);
+    font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.chat-messages {
+    flex-grow: 1; overflow-y: auto; padding: 15px;
+    background: var(--bg); /* Sfondo scuro chat */
+    display: flex; flex-direction: column; gap: 15px;
+}
+
+/* Messaggi stile Terminale */
+.message {
+    padding: 10px 15px; 
+    border-radius: 4px; 
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 2px solid var(--primary); /* Accento laterale */
+    color: var(--text-sec);
+}
+
+.msg-user { 
+    font-weight: bold; font-size: 0.85em; 
+    color: var(--primary); margin-bottom: 4px; font-family: 'Courier New', monospace;
+}
+.msg-text { color: var(--text-main); font-size: 0.95em; }
+
+.chat-input-area {
+    padding: 15px; border-top: 1px solid var(--card-border);
+    background: var(--chat-bg); display: flex; gap: 10px;
+}
+.chat-input {
+    flex-grow: 1; padding: 10px 15px; border-radius: 4px;
+    border: 1px solid var(--card-border); background: var(--input-bg);
+    color: var(--text-main); outline: none; font-family: inherit;
+}
+.chat-input:focus { border-color: var(--primary); box-shadow: 0 0 5px var(--accent-glow); }
+
+.chat-send-btn {
+    background: transparent; color: var(--primary); 
+    border: 1px solid var(--primary);
+    width: 40px; height: 40px; border-radius: 4px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.3s;
+}
+.chat-send-btn:hover { background: var(--primary); color: var(--bg); }
+
+/* ========================================= */
+/* 7. UPLOAD & FORMS (Uiverse Style Adapted) */
+/* ========================================= */
+
+.modal-upload-content {
+    width: 90%; max-width: 450px; 
+    background: var(--modal-bg); 
+    border: 1px solid var(--primary);
+    border-radius: 8px; position: relative; padding-bottom: 20px;
+    box-shadow: 0 0 25px var(--accent-glow);
+}
+
+.close-btn { 
+    position: absolute; top: 15px; right: 20px; color: var(--primary); 
+    font-size: 28px; cursor: pointer; z-index: 100; transition: 0.2s;
+}
+.close-btn:hover { text-shadow: 0 0 10px var(--primary); transform: scale(1.1); }
+
+/* --- UPLOAD WIDGET (Animazione Cartella) --- */
+.upload-widget {
+  --transition: 350ms;
+  --folder-W: 120px;
+  --folder-H: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  /* Adattato al tema: gradiente sottile basato sul colore primario */
+  background: linear-gradient(135deg, var(--card-bg), rgba(0, 243, 255, 0.05));
+  border: 1px dashed var(--primary); /* Bordo tratteggiato tecnico */
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  height: calc(var(--folder-H) * 1.7);
+  position: relative;
+  margin: 20px auto; /* Centrato */
+  width: 100%; max-width: 300px;
+}
+
+.folder {
+  position: absolute;
+  top: -20px;
+  left: calc(50% - 60px);
+  animation: float 2.5s infinite ease-in-out;
+  transition: transform var(--transition) ease;
+}
+
+.folder:hover {
+  transform: scale(1.05);
+}
+
+.folder .front-side,
+.folder .back-side {
+  position: absolute;
+  transition: transform var(--transition);
+  transform-origin: bottom center;
+}
+
+.folder .back-side::before,
+.folder .back-side::after {
+  content: "";
+  display: block;
+  background-color: yellow;
+  opacity: 0.5;
+  z-index: 0;
+  width: var(--folder-W);
+  height: var(--folder-H);
+  position: absolute;
+  transform-origin: bottom center;
+  border-radius: 15px;
+  transition: transform 350ms;
+  z-index: 0;
+}
+
+.upload-widget:hover .back-side::before {
+  transform: rotateX(-5deg) skewX(5deg);
+}
+.upload-widget:hover .back-side::after {
+  transform: rotateX(-15deg) skewX(12deg);
+}
+
+.folder .front-side {
+  z-index: 1;
+}
+
+.upload-widget:hover .front-side {
+  transform: rotateX(-40deg) skewX(15deg);
+}
+
+/* Colori della cartella adattati al TEMA */
+.folder .tip {
+  /* Usa il colore secondario (Giallo/Arancio) o Primario scuro */
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  width: 80px;
+  height: 20px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -10px;
+  z-index: 2;
+}
+
+.folder .cover {
+  /* Corpo della cartella: Usa il colore primario */
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  width: var(--folder-W);
+  height: var(--folder-H);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.custom-file-upload {
+  font-size: 1.1em;
+  color: var(--text-main); /* Testo adattivo */
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background var(--transition) ease;
+  display: inline-block;
+  width: auto;
+  padding: 10px 35px;
+  position: relative;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+.custom-file-upload:hover {
+  background: var(--primary);
+  color: var(--bg); /* Testo scuro su sfondo acceso */
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+/* --- Input testuali (Titolo/Categoria) --- */
+.form-group { margin-bottom: 20px; padding: 0 25px; }
+
+input[type="text"], select { 
+    background: var(--input-bg); 
+    border: 1px solid var(--card-border);
+    color: var(--text-main); 
+    border-radius: 4px; 
+    font-family: inherit;
+    width: 100%; padding: 12px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--accent-glow);
+    outline: none;
+}
+
+/* Bottone Submit (Carica Progetto) */
+.btn-submit {
+    background-color: transparent; 
+    color: var(--primary); 
+    border: 2px solid var(--primary);
+    padding: 15px; margin: 0 25px; cursor: pointer; 
+    border-radius: 4px; width: calc(100% - 50px); 
+    font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
+    transition: 0.3s;
+}
+.btn-submit:hover {
+    background-color: var(--primary); 
+    color: var(--bg);
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* ========================================= */
+/* 8. CONTROLLI FLOTTANTI (Timeline)         */
+/* ========================================= */
+.controls-floating-bar {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 600px;
+    background: rgba(0, 0, 0, 0.6); 
+    border: 1px solid var(--primary);
+    backdrop-filter: blur(12px);
+    padding: 10px 25px; border-radius: 50px;
+    display: flex; align-items: center; gap: 20px; z-index: 100;
+}
+body.light-mode .controls-floating-bar { background: rgba(255,255,255,0.8); border-color: var(--primary); }
+
+.btn-big-play {
+    width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary);
+    background: transparent; color: var(--primary); font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.3s;
+}
+.btn-big-play:hover { background: var(--primary); color: var(--bg); box-shadow: 0 0 15px var(--primary); }
+
+/* Range Slider Customization */
+input[type=range].styled-slider::-webkit-slider-thumb {
+    background: var(--bg); border: 2px solid var(--primary);
+}
+input[type=range].styled-slider::-webkit-slider-runnable-track {
+    background: var(--card-border);
+}
+
+/* ========================================= */
+/* 9. RESPONSIVE                             */
+/* ========================================= */
+@media (max-width: 1000px) {
+    body { padding-left: 0; padding-bottom: 80px; }
+    .sidebar-nav {
+        flex-direction: row; width: 90%; height: 60px; left: 5%; bottom: 20px; top: auto;
+        border-radius: 50px; transform: none; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    .modal-view-content { flex-direction: column !important; height: 95vh; border: none; }
+    .chat-container { width: 100%; border-left: none; border-top: 1px solid var(--primary); }
+}
