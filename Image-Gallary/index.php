@@ -17,8 +17,8 @@
 
     // LOGICA UPLOAD FILE
     if(isset($_POST["upload"])){
-        $title = mysqli_real_escape_string($conn, $_POST["title"]);
-        $category = mysqli_real_escape_string($conn, $_POST["category"]);
+        $title = mysqli_real_escape_string($connect, $_POST["title"]);
+        $category = mysqli_real_escape_string($connect, $_POST["category"]);
         $filename = $_FILES['image']['name'];
         $tempname = $_FILES['image']['tmp_name'];
         $fileExt = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -28,7 +28,7 @@
             if (!file_exists('./uploads')) { mkdir('./uploads', 0777, true); }
             if(move_uploaded_file($tempname, "./uploads/" . $newFileName)){
                 $query = "INSERT INTO gallary (title, category, path) VALUES ('$title', '$category', '$newFileName')";
-                if(mysqli_query($conn, $query)){
+                if(mysqli_query($connect, $query)){
                     $_SESSION['upload_msg'] = "<div class='alert success' style='background:#d4edda; color:#155724; padding:10px; border-radius:5px; margin-bottom:15px; text-align:center;'>✅ Caricato!</div>";
                     header("Location: index.php"); exit();
                 }
@@ -76,8 +76,8 @@
 
         <div class="gallery-grid">
             <?php 
-                $where = isset($_GET['category']) ? "WHERE category='".mysqli_real_escape_string($conn, $_GET['category'])."'" : "";
-                $res = mysqli_query($conn, "SELECT * FROM gallary $where ORDER BY title ASC");
+                $where = isset($_GET['category']) ? "WHERE category='".mysqli_real_escape_string($connect, $_GET['category'])."'" : "";
+                $res = mysqli_query($connect, "SELECT * FROM gallary $where ORDER BY title ASC");
                 while ($row = mysqli_fetch_assoc($res)) {
                     $path = "./uploads/" . $row['path'];
                     $t = htmlspecialchars($row['title']);

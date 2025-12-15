@@ -52,17 +52,19 @@ if (isset($_POST['login'])) {
     if ($result && $result->num_rows > 0) {
         $info = $result->fetch_assoc();
         if ($passwordHashed == $info['Password']) {
+            // Login Corretto
             $_SESSION['username'] = $info['Username'];
             $_SESSION['nome'] = $info['Nome'];
             $_SESSION['cognome'] = $info['Cognome'];
             
+            $_SESSION['admin'] = $info['Admin']; 
+            // ---------------------------------------------
+            
             header("Location: ../Image-Gallary/index.php");
             exit();
         } else {
-            $alertMessage = "ACCESS DENIED: Invalid credentials";
+            $alertMessage = "ACCESSO NEGATO: Credenziali invalide";
         }
-    } else {
-        $alertMessage = "ACCESS DENIED: User not found";
     }
 }
 ?>

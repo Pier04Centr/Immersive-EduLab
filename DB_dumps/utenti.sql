@@ -20,8 +20,8 @@ CREATE TABLE `utenti` (
   `Nome` varchar(50) NOT NULL,
   `Cognome` varchar(50) NOT NULL,
   `Email` varchar(255) NOT NULL,
-  `Password` varchar(255) NOT NULL
-  -- RIMOSSA LA VIRGOLA QUI SOPRA
+  `Password` varchar(255) NOT NULL,
+  `Admin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -29,13 +29,12 @@ CREATE TABLE `utenti` (
 --
 ALTER TABLE `utenti`
   ADD PRIMARY KEY (`Username`); 
-  -- RIMOSSA LA VIRGOLA QUI SOPRA E MESSO PUNTO E VIRGOLA
 
 -- Svuota la tabella se c'erano dati vecchi
 TRUNCATE TABLE `utenti`;
 
-INSERT INTO `utenti` (`Username`, `Nome`, `Cognome`, `Email`, `Password`) VALUES
-('test', 'Mario', 'Rossi','test@mail.com', 'dce2a1d10cad7aaad66071106262fa4c5f5d0f7a102a723422174d80a303f6f021048446f1c9a7de16bc6a8285d650f8c2ccf523ee0fe70ded7a55d331bc61b0');
+INSERT INTO `utenti` (`Username`, `Nome`, `Cognome`, `Email`, `Password`, `Admin`) VALUES
+('test', 'Mario', 'Rossi','test@mail.com', 'dce2a1d10cad7aaad66071106262fa4c5f5d0f7a102a723422174d80a303f6f021048446f1c9a7de16bc6a8285d650f8c2ccf523ee0fe70ded7a55d331bc61b0', 1);
 
 
 COMMIT;

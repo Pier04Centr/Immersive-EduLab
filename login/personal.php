@@ -25,7 +25,13 @@ if ($result && mysqli_num_rows($result) > 0) {
     header("Location: ./index.php");
     exit();
 }
+if ($currentUser['Admin'] == 1) {
+    header("Location: admin.php");
+    exit();
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="it">

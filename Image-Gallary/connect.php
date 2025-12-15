@@ -4,5 +4,5 @@
     $pass = "root";
     $db = "gallary";
 
-    $conn = mysqli_connect($servername,$username,$pass,$db);
+    $connect = mysqli_connect($servername,$username,$pass,$db);
 ?>
