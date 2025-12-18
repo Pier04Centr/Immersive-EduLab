@@ -65,6 +65,8 @@ if (isset($_POST['login'])) {
         } else {
             $alertMessage = "ACCESSO NEGATO: Credenziali invalide";
         }
+    } else {
+        $alertMessage = "ACCESSO NEGATO: Credenziali invalide";
     }
 }
 ?>

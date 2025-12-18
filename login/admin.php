@@ -60,8 +60,8 @@ if (isset($_GET['delete_project'])) {
 <body>
 
     <div class="sidebar-nav">
-        <a href="../Index.html" class="sidebar-btn" title="Home"><i class="fas fa-home icon"></i></a>
-        <a href="../Image-Gallary/index.php" class="sidebar-btn" title="Upload"><i class="fas fa-vr-cardboard"></i></a>
+        <a href="../Image-Gallary/index.php" class="sidebar-btn" title="Home"><i class="fas fa-home icon"></i></a>
+        <a href="./logout.php" class="sidebar-btn" title="Upload"><i class="fas fa-sign-out-alt icon"></i></a>
         <a href="#" class="sidebar-btn" title="Profilo"><i class="fas fa-user icon"></i></a>
 
         <button class="sidebar-btn" title="Cambia Tema" id="theme-toggle">
