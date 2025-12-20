@@ -21,7 +21,8 @@ CREATE TABLE `utenti` (
   `Cognome` varchar(50) NOT NULL,
   `Email` varchar(255) NOT NULL,
   `Password` varchar(255) NOT NULL,
-  `Admin` tinyint(1) NOT NULL DEFAULT '0'
+  `Admin` tinyint(1) NOT NULL DEFAULT '0',
+  `avatar_3d` VARCHAR(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
