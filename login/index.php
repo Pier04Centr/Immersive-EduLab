@@ -23,8 +23,16 @@ if (isset($_POST['register'])) {
             $_SESSION['username'] = $username;
             $_SESSION['nome'] = $nome;
             $_SESSION['cognome'] = $cognome;
+            $avatars = glob("./avatars/*.glb"); // Ottieni tutti i file .glb nella cartella avatars
 
-            $sql = "INSERT INTO utenti (Username, Nome, Cognome, Email, Password) VALUES ('$username', '$nome', '$cognome', '$email', SHA2('$password', 512))";
+            if (count($avatars) == 0) {
+                $avatar_3d = ""; // Nessun avatar disponibile
+            } else {
+                $avatar_3d = basename($avatars[array_rand($avatars)]); // Seleziona un file casuale e prendi solo il nome del file
+            }
+
+            $sql = "INSERT INTO utenti (Username, Nome, Cognome, Email, Password, avatar_3d)
+                    VALUES ('$username', '$nome', '$cognome', '$email', SHA2('$password', 512), '$avatar_3d')";
             $result = mysqli_query($conn, $sql);
 
             if ($result) {
