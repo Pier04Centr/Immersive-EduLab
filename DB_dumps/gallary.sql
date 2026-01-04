@@ -54,6 +54,7 @@ INSERT INTO `gallary` (`title`, `category`, `path`) VALUES
 ('Reticolo Cristallino Ghiaccio', 'Chimica', 'ice_lattice.glb'),
 ('Struttura Molecolare CO2', 'Chimica', 'co2.glb'),
 ('Idrolisi amido', 'Chimica', 'starch_hydrolysis.glb'),
+('Sistema Solare', 'Chimica', 'Solar_System.glb'),
 
 -- INGEGNERIA (Motori e Auto)
 ('Blocco Motore V8', 'Ingegneria', 'disassembled_v8_engine_block.glb'),
