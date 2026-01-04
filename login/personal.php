@@ -106,7 +106,7 @@ if ($currentUser['Admin'] == 1) {
 
                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <span><i class="fas fa-calendar-alt me-3"></i>Iscritto dal</span>
-                                <span>2025</span> </div>
+                                <span>2024</span> </div>
                         </div>
 
                     </div>
@@ -115,128 +115,136 @@ if ($currentUser['Admin'] == 1) {
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    
-    <script src="./personal.js"></script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    const avatarFilename = "<?php echo $currentUser['avatar_3d']; ?>";
-    
-    // Costruiamo il percorso
-    const avatarPath = "./avatars/" + avatarFilename;
-    
-    // --- AGGIUNGI QUESTA RIGA ---
-    console.log("STO CERCANDO IL FILE QUI:", new URL(avatarPath, document.baseURI).href); 
-    // ----------------------------
-
-    if (avatarFilename && avatarFilename.trim() !== "") {
-        init3DViewer(avatarPath);
-    }
-});
-
-    function init3DViewer(url) {
-        const container = document.getElementById('avatar-container');
-        if (!container) return; // Sicurezza
-
-        // 1. Setup Scena
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 0, 3.5);
-
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(renderer.domElement);
-
-        // 2. Luci
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-        
-        const blueLight = new THREE.PointLight(0x00f3ff, 2, 50);
-        blueLight.position.set(-2, 2, 2);
-        scene.add(blueLight);
-
-        const yellowLight = new THREE.PointLight(0xffcc00, 2, 50);
-        yellowLight.position.set(2, 2, 2);
-        scene.add(yellowLight);
-
-        // 3. Setup Gruppo e Variabili Animazione
-        const loader = new THREE.GLTFLoader();
-        const modelGroup = new THREE.Group(); 
-        scene.add(modelGroup); // Aggiungiamo il GRUPPO alla scena
-
-        let mixer = null;
-        const clock = new THREE.Clock();
-
-        // 4. Caricamento
-        loader.load(url, (gltf) => {
-            const model = gltf.scene;
-
-            // Centramento
-            const box = new THREE.Box3().setFromObject(model);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
-
-            // Spostiamo il modello per centrarlo nel suo "pivot"
-            model.position.set(-center.x, -center.y, -center.z);
-
-            // --- IL FIX ROTAZIONE ---
-            // Ruotiamo il modello "dentro" il gruppo per raddrizzarlo
-            model.rotation.y = - Math.PI / 1.98; 
-            model.rotation.x = Math.PI / 15; 
-
-            // Aggiungiamo il modello al gruppo
-            modelGroup.add(model);
-
-            // Scala il gruppo intero
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scaleFactor = 2.2 / maxDim; 
-            modelGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-            // Avvia Animazione se esiste
-            if (gltf.animations && gltf.animations.length > 0) {
-                mixer = new THREE.AnimationMixer(model);
-                mixer.clipAction(gltf.animations[0]).play();
-            }
-
-        }, undefined, function(error) {
-            console.error("Errore caricamento avatar:", error);
-            container.innerHTML = "<p style='color:red; font-size:12px;'>Errore 3D</p>";
-        });
-
-        // 5. Mouse Move (Ruota il GRUPPO, non il modello)
-        // Così il fix di rotazione interno non viene sovrascritto
-        document.addEventListener('mousemove', (e) => {
-            const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-            const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
-            
-            modelGroup.rotation.y = mouseX * 0.6; 
-            modelGroup.rotation.x = mouseY * 0.3;
-        });
-
-        // 6. Resize Finestra
-        window.addEventListener('resize', () => {
-            if(!container) return;
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        });
-
-        // 7. Loop di Render Unico
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (mixer) {
-                mixer.update(clock.getDelta());
-            }
-            
-            renderer.render(scene, camera);
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon').className = isDark ? 'fas fa-sun icon' : 'fas fa-moon icon';
         }
-        animate();
-    }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-icon').className = 'fas fa-sun icon';
+        }
     </script>
 
+    <?php if (!empty($currentUser['avatar_3d'])): ?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ricostruiamo il percorso completo: Cartella + Nome File dal DB
+            const avatarFilename = "<?php echo $currentUser['avatar_3d']; ?>";
+            const avatarPath = "./avatars/" + avatarFilename;
+
+            init3DViewer(avatarPath);
+        });
+
+        function init3DViewer(url) {
+            const container = document.getElementById('avatar-container');
+            
+            // Scena e Camera
+            const scene = new THREE.Scene();
+            // Zoom della camera regolato per vedere bene la testa
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 0, 3.5);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Luci Cyberpunk
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const blueLight = new THREE.PointLight(0x00f3ff, 2, 50);
+            blueLight.position.set(-2, 2, 2);
+            scene.add(blueLight);
+
+            const yellowLight = new THREE.PointLight(0xffcc00, 2, 50);
+            yellowLight.position.set(2, 2, 2);
+            scene.add(yellowLight);
+
+            // Caricamento Modello
+            const loader = new THREE.GLTFLoader();
+            let modelGroup = new THREE.Group();
+            scene.add(modelGroup);
+
+            loader.load(url, (gltf) => {
+                const model = gltf.scene;
+
+                // Auto-Centramento (Fondamentale per modelli scaricati da internet)
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+
+                model.position.x = -center.x;
+                model.position.y = -center.y;
+                model.position.z = -center.z;
+                
+                modelGroup.add(model);
+
+                // Auto-Zoom (Scala il modello per farlo stare nel box)
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const scaleFactor = 2.2 / maxDim; 
+                modelGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+                // --- 2. NUOVA CORREZIONE ROTAZIONE (IL FIX) ---
+                // Ruota il modello di 90 gradi (Math.PI / 2) o -90 gradi (-Math.PI / 2)
+                // Se guarda a destra, usa Math.PI / 2. Se guarda a sinistra, usa -Math.PI / 2.
+                // Proviamo con circa 45-90 gradi per farli guardare dritti:
+                model.rotation.y = - Math.PI / 1.98; // Ruota di 90 gradi verso sinistra
+                //ruota verso il basso se necessario
+                model.rotation.x = Math.PI / 15; // Leggera inclinazione di 10 gradi verso il basso  
+
+                // Animazione Idle (se presente)
+                if (gltf.animations && gltf.animations.length > 0) {
+                    const mixer = new THREE.AnimationMixer(model);
+                    const clip = gltf.animations[0];
+                    mixer.clipAction(clip).play();
+                    
+                    const clock = new THREE.Clock();
+                    function animateLoop() {
+                        requestAnimationFrame(animateLoop);
+                        mixer.update(clock.getDelta());
+                    }
+                    animateLoop();
+                }
+            }, undefined, function(error) {
+                console.error("Errore caricamento avatar:", error);
+                container.innerHTML = "<p style='color:red;'>Errore visualizzazione 3D</p>";
+            });
+
+            // Effetto Segui-Mouse
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+                
+                // Rotazione fluida
+                modelGroup.rotation.y = mouseX * 0.6; // Destra/Sinistra
+                modelGroup.rotation.x = mouseY * 0.3; // Su/Giù
+            });
+
+            // Loop di render
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Gestione resize finestra
+            window.addEventListener('resize', () => {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            });
+        }
+    </script>
+    <?php endif; ?>
 </body>
 </html>
